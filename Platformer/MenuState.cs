@@ -48,7 +48,9 @@ namespace Platformer
 		
 		public override void Draw ()
 		{
+			sfcGameWindow.Fill (Color.White);
 			menu.Draw (sfcGameWindow);
+			sfcGameWindow.Update ();
 		}
 	}
 }

@@ -23,11 +23,12 @@ namespace GameMenu
 		private int selected;
 		private MenuLayout layout;
 		private float lastSelectChange = -0.2f;
-		private float selectChangeTime = 0.2f;
+		private float selectChangeTime = 0.1f;
 		private int startX, startY;
 		private bool xOverflow = false;		
 		private bool yOverflow = false;
 		private Camera camera;
+		public int width, height;
 
 		public Menu (List<MenuObject> _objects, MenuLayout _layout, int _startX = 0, int _startY=50)
 		{
@@ -47,8 +48,11 @@ namespace GameMenu
 					obj.y = y;
 					y += obj.height + 20;
 				}
+				width = objects [0].width;
+				height = y;
 				if (y >= Constants.Constants.HEIGHT - objects [0].height) {
 					yOverflow = true;
+					height = Constants.Constants.HEIGHT;
 				}
 			} else if (layout == MenuLayout.Horizontal) {
 				int y = startY;
@@ -58,8 +62,10 @@ namespace GameMenu
 					obj.y = y;
 					x += obj.width + 10;
 				}
+				width = x;
 				if (x >= Constants.Constants.WIDTH - objects [0].width) {
 					xOverflow = true;
+					x = Constants.Constants.WIDTH;
 				}
 			}
 			objects [0].selected = true;
@@ -72,8 +78,12 @@ namespace GameMenu
 			}
 		}
 		
-		public void Update (float elapsed)
+		public void Update (float elapsed, Camera _camera=null)
 		{
+			if (_camera != null) {
+				camera.x += _camera.x;
+				camera.y += _camera.y;
+			}
 			lastSelectChange += elapsed;			
 			HandleInput ();
 			objects [selected].selected = true;
@@ -129,11 +139,9 @@ namespace GameMenu
 		
 		public void Draw (Surface sfcGameWindow)
 		{
-			sfcGameWindow.Fill (Color.White);
 			foreach (MenuObject m in objects) {
 				m.Draw (sfcGameWindow);
 			}
-			sfcGameWindow.Update ();
 		}
 		
 	}

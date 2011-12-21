@@ -26,7 +26,7 @@ namespace GameGraphic
 			sfc = s;
 		}
 		
-		public void Draw (Surface sfcGameWindow, float x, float y, int alpha=255)
+		public void Draw (Surface sfcGameWindow, float x, float y, int alpha=255, bool fill=false)
 		{
 			if (sfc != null) {
 			} else {
@@ -38,7 +38,7 @@ namespace GameGraphic
 				if (colour == Color.Transparent) {
 					colour2 = colour;
 				}
-				sfcGameWindow.Draw (box, colour2);
+				sfcGameWindow.Draw (box, colour2, true, fill);
 			}
 		}
 		

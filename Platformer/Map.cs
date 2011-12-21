@@ -22,6 +22,7 @@ namespace Platformer
 		
 		public Map ()
 		{
+			map = new List<List<Tile>> ();
 			lookup = new Dictionary<TileType, Graphic> ();
 			lookup.Add (TileType.Air, new Graphic (Color.Transparent, Tile.WIDTH, Tile.HEIGHT));
 			lookup.Add (TileType.Brick, new Graphic (Color.Brown, Tile.WIDTH, Tile.HEIGHT));
@@ -33,16 +34,17 @@ namespace Platformer
 			for (int y=0; y < Constants.Constants.MAP_HEIGHT; y++) {
 				List<Tile > row = new List<Tile> ();
 				for (int x=0; x < Constants.Constants.MAP_WIDTH; x++) {
-					Tile t = new Tile (x * Tile.WIDTH, y * Tile.HEIGHT, TileType.Air, lookup [TileType.Air]);
+					Tile t = new Tile (x * Tile.WIDTH + x * 2 + 1, y * Tile.HEIGHT + y * 2 + 1, TileType.Brick, lookup [TileType.Brick]);
 					row.Add (t);
 				}
 				map.Add (row);
 			}
+			map [10] [5].tileType = TileType.Air;
+			map [10] [5].tileGraphic = lookup [TileType.Air].Clone ();
 		}
 		public void LoadFromString (string str)
 		{
 			EffectFire fire = new EffectFire ();
-			map = new List<List<Tile>> ();
 			List<Tile > row = new List<Tile> ();
 			int x, y;
 			x = y = 0;
@@ -82,22 +84,25 @@ namespace Platformer
 		
 		public void Update (float elapsed, ref Player player, Camera camera)
 		{
-			float xSpeed = player.xSpeed * elapsed * Player.MOVE_SPEED;
-			float ySpeed = player.ySpeed * elapsed * Player.FALL_SPEED;
-			Rectangle rectLeft = new Rectangle (new Point ((int)(player.x + xSpeed), (int)(player.y + ySpeed)), 
-				new Size (1, Player.HEIGHT));
-			Rectangle rectRight = new Rectangle (new Point ((int)(player.x + xSpeed + Player.WIDTH), 
-				(int)(player.y + ySpeed)), new Size (1, Player.HEIGHT));
-			Rectangle rectTop = new Rectangle (new Point ((int)(player.x + xSpeed), ((int)(player.y + ySpeed))), 
-				new Size (Player.WIDTH, 1));
-			Rectangle rectBot = new Rectangle (new Point ((int)(player.x + xSpeed), 
-				(int)(player.y + Player.HEIGHT + ySpeed + 1)), new Size (Player.WIDTH, 1));
+			Rectangle rectLeft, rectRight, rectTop, rectBot;
+			if (player != null) {
+				float xSpeed = player.xSpeed * elapsed * Player.MOVE_SPEED;
+				float ySpeed = player.ySpeed * elapsed * Player.FALL_SPEED;				
+				rectLeft = new Rectangle (new Point ((int)(player.x + xSpeed), (int)(player.y + ySpeed)), 
+					new Size (1, Player.HEIGHT));
+				rectRight = new Rectangle (new Point ((int)(player.x + xSpeed + Player.WIDTH), (int)(player.y + 
+					ySpeed)), new Size (1, Player.HEIGHT));
+				rectTop = new Rectangle (new Point ((int)(player.x + xSpeed), ((int)(player.y + ySpeed))), 
+					new Size (Player.WIDTH, 1));
+				rectBot = new Rectangle (new Point ((int)(player.x + xSpeed), (int)(player.y + Player.HEIGHT + 
+					ySpeed + 1)), new Size (Player.WIDTH, 1));
+			}
 			
 			List<TileDirectionRelPlayer > lst = new List<TileDirectionRelPlayer> ();			
 			foreach (List<Tile> r in map) {
 				foreach (Tile c in r) {
 					c.Update (elapsed, camera); // Save CPU by only using one foreach loop
-					if (c.outOfSight) {
+					if (c.outOfSight || c.tileType == TileType.Air || player == null) {
 						continue;				
 					}
 					if (c.tileType == TileType.Air)
@@ -116,7 +121,9 @@ namespace Platformer
 					}
 				}
 			}
-			
+			if (player == null) {
+				return;
+			}
 			if (lst.Count == 0 && !player.jumping) {
 				player.falling = true;
 			} else {
