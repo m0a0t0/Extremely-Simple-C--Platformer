@@ -22,8 +22,8 @@ namespace GameMenu
 		public List<MenuObject> objects;
 		public int selected;
 		private MenuLayout layout;
-		private float lastSelectChange = -0.2f;
-		private float selectChangeTime = 0.1f;
+		public float lastSelectChange = -0.2f;
+		public float selectChangeTime = 0.1f;
 		private int startX, startY;
 		private bool xOverflow = false;		
 		private bool yOverflow = false;
@@ -132,9 +132,15 @@ namespace GameMenu
 					selected = 0;
 				}				
 			}
-			if (Keyboard.IsKeyPressed (Key.Space) && change) {
+			if (Keyboard.IsKeyPressed (Key.Return) && change) {
 				objects [selected].Fire ();
 			}			
+			
+			if (change) {
+				if (objects [selected].HandleInput (change)) {
+					lastSelectChange = 0.0f;
+				}
+			}
 		}
 		
 		public void Draw (Surface sfcGameWindow)
@@ -152,15 +158,67 @@ namespace GameMenu
 		//public int x,y;
 		public event MenuSelectedHandler selectedHandler;
 		
+		public virtual bool HandleInput (bool change)
+		{
+			return false;
+		}
+		
 		public virtual void Update (float elapsed, Camera c)
 		{
 			ApplyCamera (c);
 		}
+		
 		public abstract void Draw (Surface sfcGameWindow);
 		
 		public virtual void Fire ()
 		{
-			selectedHandler (this);
+			if (selectedHandler != null) {
+				selectedHandler (this);
+			}
+		}
+	}
+	
+	public class MenuTextEntry : MenuObject {
+		public string text;
+		public int textSize;
+		private Color colour;
+		private SdlDotNet.Graphics.Font font;
+		public event MenuSelectedHandler escapeHandler;
+		
+		public MenuTextEntry ( int _textSize, Color _colour, string _text="untitled")
+		{
+			text = _text;
+			textSize = _textSize;
+			colour = _colour;
+			font = new SdlDotNet.Graphics.Font (Constants.Constants.GetResourcePath ("arial.ttf"), textSize);
+		}
+		
+		public override bool HandleInput (bool change)
+		{
+			if (Keyboard.IsKeyPressed (Key.Backspace)) {
+				if (text.Length > 0) {
+					text = text.Remove (text.Length - 1);
+					return true;
+				}
+			} else if (Keyboard.IsKeyPressed (Key.Escape)) {
+				escapeHandler (this);
+			} else {
+				foreach (char c in "qwertyuiopasdfghjklzxcvbnm") {
+					Key k = (Key)Enum.Parse (typeof(Key), c.ToString (), true);
+					if (Keyboard.IsKeyPressed (k) && ((text == null) || (text == "") || (c != text [text.Length - 1]) || (change))) {
+						text += c;
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+		
+		public override void Draw (Surface sfcGameWindow)
+		{
+			if (text != null) {
+				sfcGameWindow.Blit (font.Render (text, colour), new Point ((int)x, (int)y));
+			}
 		}
 	}
 	
@@ -189,6 +247,11 @@ namespace GameMenu
 		
 		public void RenderText ()
 		{
+			if (selected) {
+				colour = colourSelected;
+			} else {
+				colour = colourNotSelected;
+			}			
 			sfcText = font.Render (text, colour);			
 		}
 		
@@ -196,11 +259,6 @@ namespace GameMenu
 		{
 			base.Update (elapsed, camera);
 			if (lastSelected != selected) {
-				if (selected) {
-					colour = colourSelected;
-				} else {
-					colour = colourNotSelected;
-				}
 				RenderText ();
 				lastSelected = selected;				
 			}

@@ -5,6 +5,8 @@ using SdlDotNet.Core;
 using SdlDotNet.Graphics;
 using SdlDotNet.Graphics.Primitives;
 using GameGraphic;
+using System.Xml;
+using System.IO;
 
 namespace Platformer
 {
@@ -19,6 +21,7 @@ namespace Platformer
 	{
 		public List<List<Tile>> map;
 		public Dictionary<TileType,Graphic> lookup;
+		public bool editor = false;
 		
 		public Map ()
 		{
@@ -29,6 +32,28 @@ namespace Platformer
 			lookup.Add (TileType.Fire, new Graphic (Color.Transparent, Tile.WIDTH, Tile.HEIGHT));
 		}
 			
+		public void ToXML (String name, Vector playerPos)
+		{
+			XmlWriter writer = XmlWriter.Create (Constants.Constants.GetResourcePath(name+".xml"));
+			writer.WriteStartElement ("map");
+			writer.WriteStartElement ("tiles");
+			foreach (List<Tile> r in map) {
+				foreach (Tile c in r) {
+					writer.WriteStartElement ("tile");
+					writer.WriteAttributeString ("x", r.IndexOf (c).ToString ());
+					writer.WriteAttributeString ("y", map.IndexOf (r).ToString ());
+					writer.WriteAttributeString ("type", c.tileType.ToString ());
+					writer.WriteEndElement ();
+				}
+			}
+			writer.WriteEndElement ();	
+			writer.WriteStartElement ("player");
+			writer.WriteAttributeString ("x", playerPos.X.ToString ());
+			writer.WriteAttributeString ("y", playerPos.Y.ToString ());
+			writer.WriteEndElement ();									
+			writer.WriteEndElement ();						
+		}
+		
 		public void EmptyMap ()
 		{
 			for (int y=0; y < Constants.Constants.MAP_HEIGHT; y++) {
@@ -77,7 +102,7 @@ namespace Platformer
 			foreach (List<Tile> r in map) {
 				foreach (Tile c in r) {
 					if (!c.outOfSight)
-						c.Draw (sfcGameWindow);
+						c.Draw (sfcGameWindow, editor);
 				}
 			}
 		}

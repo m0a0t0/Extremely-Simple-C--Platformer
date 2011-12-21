@@ -28,9 +28,9 @@ namespace Platformer
 			system = null;
 		}
 		
-		public void Draw (Surface sfcGameWindow)
+		public void Draw (Surface sfcGameWindow, bool editor)
 		{
-			tileGraphic.Draw (sfcGameWindow, x, y);
+			tileGraphic.Draw (sfcGameWindow, x, y, 255, editor);
 			if (system != null) {
 				system.Draw (sfcGameWindow);
 			}			
