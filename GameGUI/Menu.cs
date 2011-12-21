@@ -23,13 +23,16 @@ namespace GameMenu
 		private MenuLayout layout;
 		private float lastSelectChange = 0.0f;
 		private float selectChangeTime = 0.2f;
+		private int startX, startY;
 
-		public Menu (List<MenuObject> _objects, MenuLayout _layout)
+		public Menu (List<MenuObject> _objects, MenuLayout _layout, int _startX = 0, int _startY=50)
 		{
+			startX = _startX;
+			startY = _startY;
 			layout = _layout;
 			objects = _objects;
 			if (layout == MenuLayout.Vertical) {
-				int y = 50;
+				int y = startY;
 				foreach (MenuObject obj in objects) {
 					obj.x = Constants.Constants.WIDTH / 2 - obj.width / 2;
 					obj.y = y;

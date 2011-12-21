@@ -89,7 +89,8 @@ namespace Platformer
 		public void Draw (Surface sfcGameWindow)
 		{
 			foreach (Particle p in particles) {
-				p.Draw (sfcGameWindow);
+				if (!p.outOfSight)
+					p.Draw (sfcGameWindow);
 			}
 		}
 	}
@@ -142,6 +143,8 @@ namespace Platformer
 			int _xStop, int _yStop)
 		{
 			graphic = _graphic;
+			width = graphic.width;
+			height = graphic.height;
 			alpha = _alpha;
 			alphaStep = _alphaStep;
 			x = _x;
@@ -154,7 +157,7 @@ namespace Platformer
 		
 		public void Update (float elapsed, Camera camera)
 		{
-			dead = (Math.Abs (xTravelled) >= xStop || Math.Abs (yTravelled) >= yStop || alpha+alphaStep <= 0);
+			dead = (Math.Abs (xTravelled) >= xStop || Math.Abs (yTravelled) >= yStop || alpha + alphaStep <= 0);
 			alpha += alphaStep * elapsed;
 			float xChange = xStep * elapsed;
 			float yChange = yStep * elapsed;

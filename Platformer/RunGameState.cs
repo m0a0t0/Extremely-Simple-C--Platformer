@@ -69,8 +69,8 @@ namespace Platformer
 				return;
 			}
 			HandleInput ();			
-			camera.Update (player);			
 			map.Update (elapsed, ref player, camera);
+			camera.Update (player);						
 			
 		}
 		

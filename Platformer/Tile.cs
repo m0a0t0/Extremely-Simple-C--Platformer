@@ -18,6 +18,8 @@ namespace Platformer
 		
 		public Tile (int _x, int _y, TileType _tileType, Graphic _tileGraphic)
 		{
+			width = WIDTH;
+			height = HEIGHT;
 			x = _x;
 			y = _y;
 			tileType = _tileType;

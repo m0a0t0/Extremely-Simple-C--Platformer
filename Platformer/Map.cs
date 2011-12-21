@@ -63,23 +63,32 @@ namespace Platformer
 		{
 			foreach (List<Tile> r in map) {
 				foreach (Tile c in r) {
-					c.Draw (sfcGameWindow);
+					if (!c.outOfSight)
+						c.Draw (sfcGameWindow);
 				}
 			}
 		}
 		
 		public void Update (float elapsed, ref Player player, Camera camera)
 		{
-			Rectangle rectLeft = new Rectangle (new Point ((int)player.x, (int)player.y), new Size (1, Player.HEIGHT));
-			Rectangle rectRight = new Rectangle (new Point ((int)(player.x + Player.WIDTH), (int)player.y), new Size (1, Player.HEIGHT));
-			Rectangle rectTop = new Rectangle (new Point ((int)player.x, (int)player.y), new Size (Player.WIDTH, 1));
-			Rectangle rectBot = new Rectangle (new Point ((int)player.x, (int)(player.y + Player.HEIGHT + 1)), new Size (Player.WIDTH, 1));
+			float xSpeed = player.xSpeed * elapsed * Player.MOVE_SPEED;
+			float ySpeed = player.ySpeed * elapsed * Player.FALL_SPEED;
+			Rectangle rectLeft = new Rectangle (new Point ((int)(player.x + xSpeed), (int)(player.y + ySpeed)), 
+				new Size (1, Player.HEIGHT));
+			Rectangle rectRight = new Rectangle (new Point ((int)(player.x + xSpeed + Player.WIDTH), 
+				(int)(player.y + ySpeed)), new Size (1, Player.HEIGHT));
+			Rectangle rectTop = new Rectangle (new Point ((int)(player.x + xSpeed), ((int)(player.y + ySpeed))), 
+				new Size (Player.WIDTH, 1));
+			Rectangle rectBot = new Rectangle (new Point ((int)(player.x + xSpeed), 
+				(int)(player.y + Player.HEIGHT + ySpeed + 1)), new Size (Player.WIDTH, 1));
 			
 			List<TileDirectionRelPlayer > lst = new List<TileDirectionRelPlayer> ();			
 			foreach (List<Tile> r in map) {
 				foreach (Tile c in r) {
 					c.Update (elapsed, camera); // Save CPU by only using one foreach loop
-					
+					if (c.outOfSight) {
+						continue;				
+					}
 					if (c.tileType == TileType.Air)
 						continue;
 					TileDirectionRelPlayer t = new TileDirectionRelPlayer ();
