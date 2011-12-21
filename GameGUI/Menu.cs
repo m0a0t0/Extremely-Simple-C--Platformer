@@ -114,7 +114,7 @@ namespace GameMenu
 			colourSelected = _selected;
 			colourNotSelected = _notSelected;
 			textSize = _textSize;
-			font = new SdlDotNet.Graphics.Font ("arial.ttf", textSize);
+			font = new SdlDotNet.Graphics.Font (Constants.Constants.GetResourcePath("arial.ttf"), textSize);
 			colour = colourNotSelected;
 			lastSelected = selected;
 			RenderText ();

@@ -1,15 +1,25 @@
-﻿<Properties>
+﻿<Properties GitUserInfo="UsingGIT">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="GameGUI/Menu.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Platformer/MenuState.cs">
     <Files>
-      <File FileName="Platformer/Main.cs" Line="10" Column="33" />
-      <File FileName="GameGUI/Menu.cs" Line="40" Column="34" />
+      <File FileName="Platformer/Main.cs" Line="11" Column="18" />
+      <File FileName="GameGUI/Menu.cs" Line="67" Column="47" />
+      <File FileName="Platformer/RunGameState.cs" Line="67" Column="36" />
+      <File FileName="Platformer/MenuState.cs" Line="26" Column="46" />
+      <File FileName="Platformer/Machine.cs" Line="26" Column="1" />
+      <File FileName="GameState/State.cs" Line="19" Column="30" />
+      <File FileName="Platformer/Player.cs" Line="33" Column="10" />
+      <File FileName="GameParticleSystem/ParticleSystem.cs" Line="17" Column="32" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
-          <Node name="GameMenu" expanded="True">
-            <Node name="Menu.cs" selected="True" />
+          <Node name="GameGraphic" expanded="True" />
+          <Node name="GameMenu" expanded="True" />
+          <Node name="GameParticleSystem" expanded="True" />
+          <Node name="GameState" expanded="True" />
+          <Node name="Platformer" expanded="True">
+            <Node name="MenuState.cs" selected="True" />
           </Node>
         </State>
       </Pad>
