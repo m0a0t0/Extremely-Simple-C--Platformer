@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Platformer", "Platformer\Platformer.csproj", "{94D544AD-5312-4BF3-8B2D-6F3F76F12D2C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameState", "GameState\GameState.csproj", "{DB73F2AA-02E3-4AE9-960E-FD0F922805F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameMenu", "GameGUI\GameMenu.csproj", "{FAA569CF-495A-4748-9EEE-E0A1AEC188AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameGraphic", "GameGraphic\GameGraphic.csproj", "{F69D7244-52A7-4DFC-92CE-08C64942434E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameParticleSystem", "GameParticleSystem\GameParticleSystem.csproj", "{8A01653A-9E30-4AA5-A918-94D4886851AA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Constants", "Constants\Constants.csproj", "{DEB58AEA-F747-406B-8930-DF3489CAA45C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8A01653A-9E30-4AA5-A918-94D4886851AA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8A01653A-9E30-4AA5-A918-94D4886851AA}.Debug|x86.Build.0 = Debug|Any CPU
+		{8A01653A-9E30-4AA5-A918-94D4886851AA}.Release|x86.ActiveCfg = Release|Any CPU
+		{8A01653A-9E30-4AA5-A918-94D4886851AA}.Release|x86.Build.0 = Release|Any CPU
+		{94D544AD-5312-4BF3-8B2D-6F3F76F12D2C}.Debug|x86.ActiveCfg = Debug|x86
+		{94D544AD-5312-4BF3-8B2D-6F3F76F12D2C}.Debug|x86.Build.0 = Debug|x86
+		{94D544AD-5312-4BF3-8B2D-6F3F76F12D2C}.Release|x86.ActiveCfg = Release|x86
+		{94D544AD-5312-4BF3-8B2D-6F3F76F12D2C}.Release|x86.Build.0 = Release|x86
+		{DB73F2AA-02E3-4AE9-960E-FD0F922805F5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DB73F2AA-02E3-4AE9-960E-FD0F922805F5}.Debug|x86.Build.0 = Debug|Any CPU
+		{DB73F2AA-02E3-4AE9-960E-FD0F922805F5}.Release|x86.ActiveCfg = Release|Any CPU
+		{DB73F2AA-02E3-4AE9-960E-FD0F922805F5}.Release|x86.Build.0 = Release|Any CPU
+		{DEB58AEA-F747-406B-8930-DF3489CAA45C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DEB58AEA-F747-406B-8930-DF3489CAA45C}.Debug|x86.Build.0 = Debug|Any CPU
+		{DEB58AEA-F747-406B-8930-DF3489CAA45C}.Release|x86.ActiveCfg = Release|Any CPU
+		{DEB58AEA-F747-406B-8930-DF3489CAA45C}.Release|x86.Build.0 = Release|Any CPU
+		{F69D7244-52A7-4DFC-92CE-08C64942434E}.Debug|x86.ActiveCfg = Debug|x86
+		{F69D7244-52A7-4DFC-92CE-08C64942434E}.Debug|x86.Build.0 = Debug|x86
+		{F69D7244-52A7-4DFC-92CE-08C64942434E}.Release|x86.ActiveCfg = Release|x86
+		{F69D7244-52A7-4DFC-92CE-08C64942434E}.Release|x86.Build.0 = Release|x86
+		{FAA569CF-495A-4748-9EEE-E0A1AEC188AD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FAA569CF-495A-4748-9EEE-E0A1AEC188AD}.Debug|x86.Build.0 = Debug|Any CPU
+		{FAA569CF-495A-4748-9EEE-E0A1AEC188AD}.Release|x86.ActiveCfg = Release|Any CPU
+		{FAA569CF-495A-4748-9EEE-E0A1AEC188AD}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Platformer\Platformer.csproj
+	EndGlobalSection
+EndGlobal
