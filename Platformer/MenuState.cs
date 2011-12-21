@@ -15,6 +15,7 @@ namespace Platformer
 	{
 		private Menu menu;
 		public MenuText menuStart;
+		public MenuText menuEditor;
 		public MenuText menuQuit;
 		private List<MenuObject> objs;
 		
@@ -22,6 +23,7 @@ namespace Platformer
 		{
 			objs = new List<MenuObject> ();
 			menuStart = new MenuText ("Start", Color.Gold, Color.Black, 42);
+			menuEditor = new MenuText ("Level editor", Color.Gold, Color.Black, 42);
 			menuQuit = new MenuText ("Exit", Color.Gold, Color.Black, 42);
 			menuQuit.selectedHandler += EventMenuQuit;
 		}
@@ -34,6 +36,7 @@ namespace Platformer
 		public void Run ()
 		{
 			objs.Add (menuStart);
+			objs.Add (menuEditor);
 			objs.Add (menuQuit);
 			menu = new Menu (objs, MenuLayout.Vertical);			
 		}

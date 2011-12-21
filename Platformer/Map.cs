@@ -28,6 +28,17 @@ namespace Platformer
 			lookup.Add (TileType.Fire, new Graphic (Color.Transparent, Tile.WIDTH, Tile.HEIGHT));
 		}
 			
+		public void EmptyMap ()
+		{
+			for (int y=0; y < Constants.Constants.MAP_HEIGHT; y++) {
+				List<Tile > row = new List<Tile> ();
+				for (int x=0; x < Constants.Constants.MAP_WIDTH; x++) {
+					Tile t = new Tile (x * Tile.WIDTH, y * Tile.HEIGHT, TileType.Air, lookup [TileType.Air]);
+					row.Add (t);
+				}
+				map.Add (row);
+			}
+		}
 		public void LoadFromString (string str)
 		{
 			EffectFire fire = new EffectFire ();

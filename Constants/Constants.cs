@@ -9,6 +9,8 @@ namespace Constants
 		public static int PLAYER_WIDTH = 16;						
 		public static int PLAYER_HEIGHT = 16;
 		public static string RESOURCE_PATH = "resources/";
+		public static int MAP_WIDTH = 50;
+		public static int MAP_HEIGHT = 50;
 	
 		public static string GetResourcePath (string resource)
 		{

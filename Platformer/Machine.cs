@@ -17,13 +17,22 @@ namespace Platformer
 			Video.WindowCaption = "Platformer";
 			//state = new RunGameState (sfcGameWindow);
 			MakeMenuState ();
+			//MakeEditorState ();
 		}
 		
 		public void MakeMenuState ()
 		{
 			state = new MenuState (sfcGameWindow);
 			((MenuState)state).menuStart.selectedHandler += EventMenuStart;
-			((MenuState)state).Run ();			
+			((MenuState)state).menuEditor.selectedHandler += EventMenuEditor;			
+			((MenuState)state).Run ();		
+		}
+		
+		public void MakeEditorState ()
+		{
+			state = new LevelEditorState (sfcGameWindow);
+			((LevelEditorState)state).menuQuit.selectedHandler += EventEditorExit;
+			((LevelEditorState)state).Run ();
 		}
 		
 		public void MakeRunGameState ()
@@ -37,10 +46,21 @@ namespace Platformer
 			MakeRunGameState ();
 		}
 		
+		void EventMenuEditor (GameMenu.MenuObject obj)
+		{
+			MakeEditorState ();
+		}
+		
+		void EventEditorExit (GameMenu.MenuObject obj)
+		{
+			MakeMenuState ();
+		}		
+		
 		void EventDead ()
 		{
 			MakeMenuState ();	
 		}
+		
 		protected override void Update (float elapsed)
 		{
 			state.Update (elapsed);

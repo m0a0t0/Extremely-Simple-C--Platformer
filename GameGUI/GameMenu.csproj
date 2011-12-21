@@ -51,5 +51,9 @@
       <Project>{DEB58AEA-F747-406B-8930-DF3489CAA45C}</Project>
       <Name>Constants</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GameGraphic\GameGraphic.csproj">
+      <Project>{F69D7244-52A7-4DFC-92CE-08C64942434E}</Project>
+      <Name>GameGraphic</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
