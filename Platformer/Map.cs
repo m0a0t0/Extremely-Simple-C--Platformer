@@ -17,8 +17,8 @@ namespace Platformer
 	
 	public class Map
 	{
-		private List<List<Tile>> map;
-		private Dictionary<TileType,Graphic> lookup;
+		public List<List<Tile>> map;
+		public Dictionary<TileType,Graphic> lookup;
 		
 		public Map ()
 		{
@@ -34,13 +34,12 @@ namespace Platformer
 			for (int y=0; y < Constants.Constants.MAP_HEIGHT; y++) {
 				List<Tile > row = new List<Tile> ();
 				for (int x=0; x < Constants.Constants.MAP_WIDTH; x++) {
-					Tile t = new Tile (x * Tile.WIDTH + x * 2 + 1, y * Tile.HEIGHT + y * 2 + 1, TileType.Brick, lookup [TileType.Brick]);
+					Tile t = new Tile (x * Tile.WIDTH + x * 2 + 1, y * Tile.HEIGHT + y * 2 + 1, TileType.Air, 
+						lookup [TileType.Air]);
 					row.Add (t);
 				}
 				map.Add (row);
 			}
-			map [10] [5].tileType = TileType.Air;
-			map [10] [5].tileGraphic = lookup [TileType.Air].Clone ();
 		}
 		public void LoadFromString (string str)
 		{
@@ -60,8 +59,9 @@ namespace Platformer
 					Tile tile = new Tile (x, y, t, lookup [t].Clone ());
 					if (t == TileType.Fire) {
 						Vector xPos = new Vector (new Point ((int)x, (int)x + Tile.WIDTH));
-						Vector yPos = new Vector (new Point ((int)y-EffectFire.HEIGHT, (int)y - EffectFire.HEIGHT));
-						ParticleOptions p = fire.template.Clone();
+						Vector yPos = new Vector (new Point ((int)y - EffectFire.HEIGHT, (int)y - 
+							EffectFire.HEIGHT));
+						ParticleOptions p = fire.template.Clone ();
 						p.xPosRange = xPos;
 						p.yPosRange = yPos;
 						tile.system = new ParticleSystem (p);
@@ -81,8 +81,8 @@ namespace Platformer
 				}
 			}
 		}
-		
-		public void Update (float elapsed, ref Player player, Camera camera)
+
+		public void Update (float elapsed, ref Player player, Camera _camera)
 		{
 			Rectangle rectLeft, rectRight, rectTop, rectBot;
 			if (player != null) {
@@ -101,7 +101,7 @@ namespace Platformer
 			List<TileDirectionRelPlayer > lst = new List<TileDirectionRelPlayer> ();			
 			foreach (List<Tile> r in map) {
 				foreach (Tile c in r) {
-					c.Update (elapsed, camera); // Save CPU by only using one foreach loop
+					c.Update (elapsed, _camera);
 					if (c.outOfSight || c.tileType == TileType.Air || player == null) {
 						continue;				
 					}

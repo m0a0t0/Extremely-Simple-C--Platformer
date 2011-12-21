@@ -18,7 +18,7 @@ namespace GameGraphic
 		{
 			x += camera.x;
 			y += camera.y;
-			outOfSight = x - width < 0 || x > Constants.Constants.WIDTH || y - height < 0 || 
+			outOfSight = x < 0 || x > Constants.Constants.WIDTH || y < 0 || 
 				y > Constants.Constants.HEIGHT;
 		}
 	}

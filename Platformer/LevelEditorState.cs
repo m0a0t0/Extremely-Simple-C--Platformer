@@ -59,7 +59,36 @@ namespace Platformer
 		{
 			menu.Update (elapsed);
 			Player p = null;
-			//map.Update (elapsed, ref p, new Camera ());
+			map.Update (elapsed, ref p, new Camera ());
+			
+			if (Mouse.IsButtonPressed (MouseButton.PrimaryButton)) {
+				int tileX, tileY;
+				tileX = tileY = 0;
+				bool tileXA = false;
+				bool tileYA = false;
+				for (int x=0; x < Constants.Constants.MAP_WIDTH; x++) {
+					if (Mouse.MousePosition.X < x * Tile.WIDTH + x * 2 + 1) {
+						tileX = x - 1;
+						tileXA = true;
+						break;
+					}
+				}
+				for (int y=0; y < Constants.Constants.MAP_HEIGHT; y++) {
+					if (Mouse.MousePosition.Y < y * Tile.WIDTH + y * 2 + 1) {
+						tileY = y - 1;
+						tileYA = true;
+						break;
+					}
+				}	
+				if (tileXA && tileYA) {
+					MenuText menuText = (MenuText)menu.objects [menu.selected];
+					if (menuText.text != "Exit") {
+						TileType typ = (TileType)Enum.Parse (typeof(TileType), menuText.text, true);
+						map.map [tileY] [tileX].tileType = typ;
+						map.map [tileY] [tileX].tileGraphic = map.lookup[typ].Clone();						
+					}
+				}
+			}
 		}
 		
 		public override void Draw ()
