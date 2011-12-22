@@ -29,6 +29,7 @@ namespace GameGraphic
 		public void Draw (Surface sfcGameWindow, float x, float y, int alpha=255, bool fill=false)
 		{
 			if (sfc != null) {
+				sfcGameWindow.Blit (sfc, new Point ((int)x, (int)y));
 			} else {
 				box = new Box (new Point ((int)x, (int)y), new Size (width, height));	
 				int r = colour.R;

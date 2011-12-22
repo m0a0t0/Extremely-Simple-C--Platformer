@@ -8,7 +8,7 @@ using GameGraphic;
 
 namespace Platformer
 {
-	public class Player : Sprite
+	public class Player : GunSprite
 	{
 		public bool falling;		
 		private bool _jumping = false;
@@ -21,7 +21,6 @@ namespace Platformer
 				_jumping = value;
 			}
 		}
-		public int xSpeed,ySpeed;
 		
 		public static int WIDTH = 16;
 		public static int HEIGHT = 16;
@@ -36,9 +35,14 @@ namespace Platformer
 		{
 			x = _x;
 			y = _y;
+			gun = new Gun (GunType.HandGun, this);
+			width = WIDTH;
+			height = HEIGHT;
+//			gun.x = x + width;
+//			gun.y = y;
 		}
 		
-		public void Update (float elapsed, Camera camera)
+		public override void Update (float elapsed, Camera camera)
 		{
 			if (dead) {
 				if (system == null) {
@@ -50,6 +54,9 @@ namespace Platformer
 				system.Update (elapsed, camera);
 				return;				
 			}
+			y += ySpeed * elapsed * FALL_SPEED;			
+			x += xSpeed * elapsed * MOVE_SPEED;			
+			base.Update (elapsed, camera);
 			if (jumping) {
 				if (ySpeed >= 0) {
 					jumping = false;
@@ -61,18 +68,16 @@ namespace Platformer
 				if (ySpeed < FALL_CAP)
 					ySpeed += FALL_SPEED;
 			}
-			y += ySpeed * elapsed * FALL_SPEED;			
-			x += xSpeed * elapsed * MOVE_SPEED;
-			rect = new Rectangle (new Point ((int)x, (int)y), new Size (WIDTH, HEIGHT + 1));
-			
-			ApplyCamera (camera);
+			rect = new Rectangle (new Point ((int)x, (int)y), new Size (WIDTH, HEIGHT + 1));			
 		}
-		public void Draw (Surface sfcGameWindow)
+		
+		public override void Draw (Surface sfcGameWindow)
 		{
 			if (dead && system != null) {
 				system.Draw (sfcGameWindow);
 				return;
 			}
+			base.Draw (sfcGameWindow);
 			sfcGameWindow.Draw (new Box (new Point ((int)x, (int)y), new Size (WIDTH, HEIGHT)), COLOUR);
 		}
 		
