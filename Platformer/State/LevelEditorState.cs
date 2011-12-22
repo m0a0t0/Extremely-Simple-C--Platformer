@@ -2,6 +2,7 @@ using SdlDotNet.Core;
 using SdlDotNet.Graphics;
 using SdlDotNet.Input;
 using System;
+using System.IO;
 using System.Xml;
 using System.Collections.Generic;
 using System.Drawing;
@@ -65,7 +66,6 @@ namespace Platformer
 	public class LevelEditorState : GameState.GameState
 	{
 		private Menu menu;
-		public MenuText menuQuit, menuSave;
 		private Graphic menuBackground;
 		private Graphic menuBackgroundBorder;		
 		List<MenuObject > menuObjs;
@@ -79,6 +79,7 @@ namespace Platformer
 		public static float CAMERA_SPEED = 5f;
 		public static int TEXT_SIZE = 25;
 		private float overallCameraX, overallCameraY;
+		public event MenuSelectedHandler backToMenuHandler;
 		
 		public LevelEditorState (Surface _sfcGameWindow, string _name="untitled") : base(_sfcGameWindow)
 		{
@@ -113,19 +114,35 @@ namespace Platformer
 			}
 			MenuText menuPlayer = new MenuText ("Player", Color.Gold, Color.Black, TEXT_SIZE);
 			menuObjs.Add (menuPlayer);
-			menuSave = new MenuText ("Save", Color.Gold, Color.Red, TEXT_SIZE);	
+			MenuText menuSave = new MenuText ("Save", Color.Gold, Color.Red, TEXT_SIZE);	
 			menuSave.selectedHandler += EventSave;
 			menuObjs.Add (menuSave);
-			menuQuit = new MenuText ("Exit", Color.Gold, Color.Red, TEXT_SIZE);
-		}
-		
-		public void Run ()
-		{
+			MenuText menuDelete = new MenuText ("Delete", Color.Gold, Color.Red, TEXT_SIZE);
+			menuDelete.selectedHandler += EventDelete;
+			menuObjs.Add (menuDelete);
+			MenuText menuQuit = new MenuText ("Exit", Color.Gold, Color.Red, TEXT_SIZE);
+			menuQuit.selectedHandler += delegate(MenuObject obj) {
+				backToMenuHandler (obj);
+			};
 			menuObjs.Add (menuQuit);
 			MenuText menuName = new MenuText (name, Color.Green, Color.Green, TEXT_SIZE);
 			menuObjs.Add (menuName);			
 			menu = new Menu (menuObjs, MenuLayout.Horizontal, 5, 700);	
-			GenerateMenuBackground ();
+			GenerateMenuBackground ();			
+		}
+
+		void EventDelete (MenuObject obj)
+		{
+			try {
+				File.Delete (Constants.Constants.GetResourcePath (name + ".xml"));
+			} catch (Exception ex) {
+				Console.WriteLine (ex.ToString ());
+			}
+			backToMenuHandler (obj);
+		}
+		
+		public void Run ()
+		{
 		}
 		
 		public void GenerateMenuBackground () {

@@ -48,8 +48,7 @@ namespace Platformer
 				t = "untitled";
 			}
 			state = new LevelEditorState (sfcGameWindow, t);
-			((LevelEditorState)state).menuQuit.selectedHandler += EventToMenu;
-			((LevelEditorState)state).Run ();			
+			((LevelEditorState)state).backToMenuHandler += EventToMenu;	
 		}
 		
 		void MakeRunGameState ()
