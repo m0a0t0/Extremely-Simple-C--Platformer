@@ -23,7 +23,7 @@ namespace GameMenu
 		public int selected;
 		private MenuLayout layout; 	
 		public float lastSelectChange = -0.2f;
-		public float selectChangeTime = 0.1f;
+		public float selectChangeTime = 0.2f;
 		private int startX, startY;
 		private bool xOverflow = false;		
 		private bool yOverflow = false;
@@ -69,6 +69,15 @@ namespace GameMenu
 				}
 			}
 			objects [0].selected = true;
+		}
+		
+		public void GenerateWidth ()
+		{
+			int x = startX;
+			foreach (MenuObject obj in objects) {
+				x += obj.width + 10;
+			}
+			width = x;			
 		}
 		
 		private void UnSelect ()
@@ -252,7 +261,9 @@ namespace GameMenu
 			} else {
 				colour = colourNotSelected;
 			}			
-			sfcText = font.Render (text, colour);			
+			sfcText = font.Render (text, colour);
+			width = sfcText.Width;
+			height = sfcText.Height;			
 		}
 		
 		public override void Update (float elapsed, Camera camera)

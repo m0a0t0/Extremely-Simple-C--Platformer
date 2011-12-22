@@ -21,6 +21,7 @@ namespace Platformer
 		
 		public RunGameState (Surface _sfcGameWindow, string name) : base(_sfcGameWindow)
 		{
+			Mouse.ShowCursor = false;
 			map = new Map ();
 			XmlDocument doc = new XmlDocument ();
 			doc.Load (Constants.Constants.GetResourcePath (name));

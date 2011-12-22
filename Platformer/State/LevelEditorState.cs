@@ -125,11 +125,13 @@ namespace Platformer
 			MenuText menuName = new MenuText (name, Color.Green, Color.Green, TEXT_SIZE);
 			menuObjs.Add (menuName);			
 			menu = new Menu (menuObjs, MenuLayout.Horizontal, 5, 700);	
-			
-			menuBackgroundBorder = new Graphic (Color.Black, menu.width - 2, Constants.Constants.HEIGHT - 700);
-			menuBackground = new Graphic (Color.White, menu.width - 2, Constants.Constants.HEIGHT - 700 - 2);			
+			GenerateMenuBackground ();
 		}
 		
+		public void GenerateMenuBackground () {
+			menuBackgroundBorder = new Graphic (Color.Black, menu.width - 2, Constants.Constants.HEIGHT - 700);
+			menuBackground = new Graphic (Color.White, menu.width - 2, Constants.Constants.HEIGHT - 700 - 2);				
+		}
 
 		void EventSave (MenuObject obj)
 		{
@@ -152,9 +154,11 @@ namespace Platformer
 			t.colourSelected = Color.Green;
 			t.colourNotSelected = Color.Green;
 			t.RenderText ();			
+			menu.GenerateWidth ();
+			GenerateMenuBackground ();						
 			menu.lastSelectChange = -0.2f;
 			nameMenu = null;
-			map.ToXML (name, vecPlayer);			
+			map.ToXML (name, vecPlayer);
 		}
 		
 		
