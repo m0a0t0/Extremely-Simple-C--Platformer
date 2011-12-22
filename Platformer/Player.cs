@@ -15,8 +15,8 @@ namespace Platformer
 		public bool jumping {
 			get { return _jumping; }
 			set {
-				if (ySpeed == 0 && value && !falling) {
-					ySpeed = -FALL_CAP;
+				if (yDir == 0 && value && !falling) {
+					yDir = -FALL_CAP;
 				}
 				_jumping = value;
 			}
@@ -44,6 +44,9 @@ namespace Platformer
 		
 		public override void Update (float elapsed, Camera camera)
 		{
+			if (health <= 0) {
+				dead = true;
+			}
 			if (dead) {
 				if (system == null) {
 					ParticleOptions ops = (new EffectDie ()).template;
@@ -54,19 +57,19 @@ namespace Platformer
 				system.Update (elapsed, camera);
 				return;				
 			}
-			y += ySpeed * elapsed * FALL_SPEED;			
-			x += xSpeed * elapsed * MOVE_SPEED;			
+			y += yDir * elapsed * FALL_SPEED;			
+			x += xDir * elapsed * MOVE_SPEED;			
 			base.Update (elapsed, camera);
 			if (jumping) {
-				if (ySpeed >= 0) {
+				if (yDir >= 0) {
 					jumping = false;
 					falling = true;
 				} else {
-					ySpeed += FALL_SPEED;
+					yDir += FALL_SPEED;
 				}
 			} else if (falling) {
-				if (ySpeed < FALL_CAP)
-					ySpeed += FALL_SPEED;
+				if (yDir < FALL_CAP)
+					yDir += FALL_SPEED;
 			}
 			rect = new Rectangle (new Point ((int)x, (int)y), new Size (WIDTH, HEIGHT + 1));			
 		}

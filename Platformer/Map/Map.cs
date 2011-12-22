@@ -118,12 +118,12 @@ namespace Platformer
 			}
 		}
 
-		public void Update (float elapsed, ref Player player, Camera _camera)
+		public void Update (float elapsed, ref Player player, Camera _camera, ref List<Bullet> playerBullets)
 		{
 			Rectangle rectLeft, rectRight, rectTop, rectBot;
 			if (player != null) {
-				float xSpeed = player.xSpeed * elapsed * Player.MOVE_SPEED;
-				float ySpeed = player.ySpeed * elapsed * Player.FALL_SPEED;				
+				float xSpeed = player.xDir * elapsed * Player.MOVE_SPEED;
+				float ySpeed = player.yDir * elapsed * Player.FALL_SPEED;				
 				rectLeft = new Rectangle (new Point ((int)(player.x + xSpeed), (int)(player.y + ySpeed)), 
 					new Size (1, Player.HEIGHT));
 				rectRight = new Rectangle (new Point ((int)(player.x + xSpeed + Player.WIDTH), (int)(player.y + 
@@ -138,11 +138,20 @@ namespace Platformer
 			foreach (List<Tile> r in map) {
 				foreach (Tile c in r) {
 					c.Update (elapsed, _camera);
-					if (c.outOfSight || c.tileType == TileType.Air || player == null) {
+					if (c.tileType == TileType.Air) {
+						continue;
+					}
+					if (playerBullets != null) {
+						foreach (Bullet b in playerBullets) {
+							if (c.rect.IntersectsWith (b.rect)) {
+								playerBullets [playerBullets.IndexOf (b)].dead = true;
+							}
+						}
+					}
+				
+					if (c.outOfSight || player == null) {
 						continue;				
 					}
-					if (c.tileType == TileType.Air)
-						continue;
 					TileDirectionRelPlayer t = new TileDirectionRelPlayer ();
 					t.tile = c;
 					t.below = c.rect.IntersectsWith (rectBot);
@@ -174,7 +183,7 @@ namespace Platformer
 			if (tile.below && !player.jumping && rectangles [3].IntersectsWith (new Rectangle (new Point ((int)tile.tile.x, (int)tile.tile.y), new Size (Tile.WIDTH, 7)))) {
 				player.y = tile.tile.y - Player.HEIGHT - 1;
 				player.falling = false;
-				player.ySpeed = 0;
+				player.yDir = 0;
 			}			
 			else if (tile.left) {
 				player.x = tile.tile.x + Tile.WIDTH;

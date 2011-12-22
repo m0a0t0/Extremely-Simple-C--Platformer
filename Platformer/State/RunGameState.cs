@@ -31,29 +31,21 @@ namespace Platformer
 			camera = new Camera ();
 		}
 		
-//		private void EventTick (object sender, TickEventArgs e)
-//		{
-//			Update (e.SecondsElapsed);
-//			Draw ();
-//		}
-//                
-//		private void EventQuit (object sender, QuitEventArgs e)
-//		{
-//			Events.QuitApplication ();
-//		}	
-		
 		private void HandleInput ()
 		{
 			if (Keyboard.IsKeyPressed (Key.D)) {
-				player.xSpeed = 1;
+				player.xDir = 1;
 			} else if (Keyboard.IsKeyPressed (Key.A)) {
-				player.xSpeed = -1;
+				player.xDir = -1;
 			} else {
-				player.xSpeed = 0;
+				player.xDir = 0;
 			}
-			
 			if (Keyboard.IsKeyPressed (Key.W) && !player.jumping && !player.falling) {
 				player.jumping = true;
+			}
+			
+			if (Keyboard.IsKeyPressed (Key.Space)) {
+				player.gun.Fire ();
 			}
 		}
 		
@@ -67,7 +59,7 @@ namespace Platformer
 				return;
 			}
 			HandleInput ();			
-			map.Update (elapsed, ref player, camera);
+			map.Update (elapsed, ref player, camera, ref player.gun.bullets);
 			camera.Update (player);						
 			
 		}

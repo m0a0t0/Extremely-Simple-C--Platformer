@@ -13,7 +13,7 @@ namespace GameGraphic
 		public Rectangle rect;
 		public bool outOfSight;
 		public int width, height;
-		public int xSpeed, ySpeed;		
+		public int xDir, yDir;		
 		
 		protected virtual void ApplyCamera (Camera camera)
 		{

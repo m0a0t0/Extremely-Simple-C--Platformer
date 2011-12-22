@@ -57,7 +57,7 @@
     <Compile Include="Map\Map.cs" />
     <Compile Include="Map\Tile.cs" />
     <Compile Include="Guns\Guns.cs" />
-    <Compile Include="GunSprite.cs" />
+    <Compile Include="Sprites.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

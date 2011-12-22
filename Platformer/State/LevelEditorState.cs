@@ -178,7 +178,8 @@ namespace Platformer
 			
 			menu.Update (elapsed);
 			Player p = null;
-			map.Update (elapsed, ref p, camera);
+			List<Bullet > b = null;
+			map.Update (elapsed, ref p, camera, ref b);
 			grid.Update (camera);
 			player.Update (camera);	
 		}
