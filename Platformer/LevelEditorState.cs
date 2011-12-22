@@ -11,42 +11,30 @@ using GameGraphic;
 
 namespace Platformer
 {	
-	public class LevelEditorState : GameState.GameState
-	{
-		private Menu menu;
-		public MenuText menuQuit, menuSave;
-		private Graphic menuBackground;
-		private Graphic menuBackgroundBorder;		
-		List<MenuObject > menuObjs;
-		public Surface sfcGrid;
-		private Map map;
-		private Menu nameMenu;
-		private string name;
-		private Vector vecPlayer;
-		private Graphic player;
-		
-		public static int TEXT_SIZE = 25;
-		
-		public LevelEditorState (Surface _sfcGameWindow, string _name="untitled") : base(_sfcGameWindow)
+	public class EditorPlayer : Sprite {
+		public Vector gridPos;
+		Graphic graphic;
+		public EditorPlayer (Vector _gridPos) : base()
 		{
-			name = _name;
-			map = new Map ();
-			map.editor = true;	
-			vecPlayer = new Vector (new Point (2, 3));
-			player = new Graphic (Color.Blue, Tile.WIDTH, Tile.HEIGHT);
-			
-			if (name.EndsWith (".xml")) {
-				XmlDocument doc = new XmlDocument ();
-				doc.Load (Constants.Constants.GetResourcePath (name));
-				map.FromXML (doc);
-				XmlNode p = doc.SelectSingleNode ("//player");
-				vecPlayer.X = Convert.ToInt16 (p.Attributes ["x"].InnerText);
-				vecPlayer.Y = Convert.ToInt16 (p.Attributes ["y"].InnerText);
-				name = name.Replace (".xml", "");				
-			} else {			
-				map.EmptyMap ();
-			}
-			
+			gridPos = _gridPos;
+			graphic = new Graphic (Color.Blue, Player.WIDTH, Player.HEIGHT);
+		}
+		
+		public void Update (Camera c)
+		{
+			ApplyCamera (c);
+		}
+		
+		public void Draw (Surface sfcGameWindow)
+		{
+			graphic.Draw (sfcGameWindow, (int)x, (int)y, 255, true);
+		}
+	}
+	
+	public class EditorGrid : Sprite {
+		private Surface sfcGrid;
+		public EditorGrid ()
+		{
 			sfcGrid = new Surface (new Size (Constants.Constants.MAP_WIDTH + Constants.Constants.MAP_WIDTH * 
 				Tile.WIDTH, Constants.Constants.MAP_HEIGHT + Constants.Constants.MAP_HEIGHT * Tile.HEIGHT));
 			sfcGrid.Fill (Color.Transparent);
@@ -59,7 +47,64 @@ namespace Platformer
 			}
 			for (int y=0; y < Constants.Constants.MAP_HEIGHT; y++) {
 				horizont.Draw (sfcGrid, 0, y * 2 + y * Tile.HEIGHT, 255, true);
+			}			
+		}
+		
+		public void Update (Camera c)
+		{
+			ApplyCamera (c);
+		}
+		
+		public void Draw (Surface sfcGameWindow)
+		{
+			sfcGameWindow.Blit (sfcGrid, new Rectangle (new Point ((int)x, (int)y), 
+				new Size (Constants.Constants.WIDTH, Constants.Constants.HEIGHT)));
+		}
+		
+	}
+	public class LevelEditorState : GameState.GameState
+	{
+		private Menu menu;
+		public MenuText menuQuit, menuSave;
+		private Graphic menuBackground;
+		private Graphic menuBackgroundBorder;		
+		List<MenuObject > menuObjs;
+		public EditorGrid grid;
+		private Map map;
+		private Menu nameMenu;
+		private string name;
+		private Vector vecPlayer;
+		private EditorPlayer player;
+		private Camera camera;
+		public static float CAMERA_SPEED = 5f;
+		public static int TEXT_SIZE = 25;
+		private float overallCameraX, overallCameraY;
+		
+		public LevelEditorState (Surface _sfcGameWindow, string _name="untitled") : base(_sfcGameWindow)
+		{
+			camera = new Camera ();
+			name = _name;
+			map = new Map ();
+			map.editor = true;	
+			vecPlayer = new Vector (new Point (2, 3));
+			player = new EditorPlayer (vecPlayer);
+			if (name.EndsWith (".xml")) {
+				XmlDocument doc = new XmlDocument ();
+				doc.Load (Constants.Constants.GetResourcePath (name));
+				map.FromXML (doc);
+				XmlNode p = doc.SelectSingleNode ("//player");
+				player.gridPos.X = Convert.ToInt16 (p.Attributes ["x"].InnerText);
+				player.gridPos.Y = Convert.ToInt16 (p.Attributes ["y"].InnerText);
+				name = name.Replace (".xml", "");				
+			} else {			
+				map.EmptyMap ();
 			}
+			
+			Vector v = map.GetTilePos ((int)player.gridPos.X, (int)player.gridPos.Y);
+			player.x = v.X;
+			player.y = v.Y;	
+			
+			grid = new EditorGrid ();
 			
 			menuObjs = new List<MenuObject> ();
 			foreach (TileType typ in Enum.GetValues(typeof(TileType))) {
@@ -124,10 +169,18 @@ namespace Platformer
 				nameMenu.Update (elapsed, new Camera ());
 				return;
 			}
+			HandleMouse ();
+			HandleInput ();
+			
 			menu.Update (elapsed);
 			Player p = null;
-			map.Update (elapsed, ref p, new Camera ());
-			
+			map.Update (elapsed, ref p, camera);
+			grid.Update (camera);
+			player.Update (camera);	
+		}
+		
+		void HandleMouse ()
+		{
 			if (Mouse.IsButtonPressed (MouseButton.PrimaryButton)) {
 				MenuText mT = (MenuText)menu.objects [menu.objects.Count - 1];
 				if (mT.colourSelected != Color.Red) {
@@ -140,14 +193,14 @@ namespace Platformer
 				bool tileXA = false;
 				bool tileYA = false;
 				for (int x=0; x < Constants.Constants.MAP_WIDTH; x++) {
-					if (Mouse.MousePosition.X < x * Tile.WIDTH + x * 2 + 1) {
+					if (Mouse.MousePosition.X+overallCameraX < x * Tile.WIDTH + x * 2 + 1) {
 						tileX = x - 1;
 						tileXA = true;
 						break;
 					}
 				}
 				for (int y=0; y < Constants.Constants.MAP_HEIGHT; y++) {
-					if (Mouse.MousePosition.Y < y * Tile.WIDTH + y * 2 + 1) {
+					if (Mouse.MousePosition.Y+overallCameraY < y * Tile.WIDTH + y * 2 + 1) {
 						tileY = y - 1;
 						tileYA = true;
 						break;
@@ -156,7 +209,10 @@ namespace Platformer
 				if (tileXA && tileYA) {
 					MenuText menuText = (MenuText)menu.objects [menu.selected];
 					if (menuText.text == "Player") {
-						vecPlayer = new Vector (new Point (tileX, tileY));
+						player.gridPos = new Vector (new Point (tileX, tileY));
+						Vector v = map.GetTilePos ((int)player.gridPos.X, (int)player.gridPos.Y);
+						player.x = v.X;
+						player.y = v.Y;								
 					} else if (menuText.text != "Exit" && menuText.text != "Save" && menuText.text != name) {
 						TileType typ = (TileType)Enum.Parse (typeof(TileType), menuText.text, true);
 						Graphic t = map.lookup [typ].Clone ();
@@ -167,9 +223,28 @@ namespace Platformer
 						map.map [tileY] [tileX].tileGraphic = t;						
 					}
 				}
-			}
+			}			
 		}
 		
+		void HandleInput ()
+		{
+			if (Keyboard.IsKeyPressed (Key.A)) {
+				camera.x = CAMERA_SPEED;
+			} else if (Keyboard.IsKeyPressed (Key.D)) {
+				camera.x = -CAMERA_SPEED;
+			} else {
+				camera.x = 0;
+			}
+			if (Keyboard.IsKeyPressed (Key.W)) {
+				camera.y = CAMERA_SPEED;
+			} else if (Keyboard.IsKeyPressed (Key.S)) {
+				camera.y = -CAMERA_SPEED;
+			} else {
+				camera.y = 0;
+			}
+			overallCameraX += -1 * camera.x;
+			overallCameraY += -1 * camera.y;
+		}
 		public override void Draw ()
 		{
 			sfcGameWindow.Fill (Color.White);
@@ -179,12 +254,12 @@ namespace Platformer
 				sfcGameWindow.Update ();
 				return;
 			}
-			sfcGameWindow.Blit (sfcGrid, new Rectangle (new Point (0, 0), new Size (Constants.Constants.WIDTH, Constants.Constants.HEIGHT)));			
+			//sfcGameWindow.Blit (sfcGrid, new Rectangle (new Point (0, 0), new Size (Constants.Constants.WIDTH, Constants.Constants.HEIGHT)));			
+			grid.Draw (sfcGameWindow);
 			map.Draw (sfcGameWindow);			
 			menuBackgroundBorder.Draw (sfcGameWindow, 5, 700, 255, true);			
 			menuBackground.Draw (sfcGameWindow, 6, 700, 255, true);
-			player.Draw (sfcGameWindow, vecPlayer.X * 2 + vecPlayer.X * Tile.WIDTH + 1, vecPlayer.Y * 2 + 
-				vecPlayer.Y * Tile.HEIGHT + 1, 255, true);
+			player.Draw (sfcGameWindow);
 			menu.Draw (sfcGameWindow);	
 			sfcGameWindow.Update ();
 		}

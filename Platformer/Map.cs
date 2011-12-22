@@ -57,7 +57,6 @@ namespace Platformer
 					map [y] [x].system = new ParticleSystem (p);
 				}									
 				map [y] [x].tileType = typ;
-				//Vector v = GetTilePos (x, y);
 				map [y] [x].x = (int)v.X;
 				map [y] [x].y = (int)v.Y;
 			}
@@ -106,36 +105,6 @@ namespace Platformer
 					row.Add (t);
 				}
 				map.Add (row);
-			}
-		}
-		public void LoadFromString (string str)
-		{
-			EffectFire fire = new EffectFire ();
-			List<Tile > row = new List<Tile> ();
-			int x, y;
-			x = y = 0;
-			foreach (char c in str) {
-				if (c == '\n') {
-					map.Add (row);
-					row = new List<Tile> ();
-					x = 0;					
-					y += Tile.HEIGHT;
-				} else {
-					TileType t = (TileType)Convert.ToInt16 (c) - 48;
-					// if it wasn't cloned then each TileGraphic of each TileType would be the same
-					Tile tile = new Tile (x, y, t, lookup [t].Clone ());
-					if (t == TileType.Fire) {
-						Vector xPos = new Vector (new Point ((int)x, (int)x + Tile.WIDTH));
-						Vector yPos = new Vector (new Point ((int)y - EffectFire.HEIGHT, (int)y - 
-							EffectFire.HEIGHT));
-						ParticleOptions p = fire.template.Clone ();
-						p.xPosRange = xPos;
-						p.yPosRange = yPos;
-						tile.system = new ParticleSystem (p);
-					}			
-					row.Add (tile);
-					x += Tile.WIDTH;					
-				}
 			}
 		}
 		
