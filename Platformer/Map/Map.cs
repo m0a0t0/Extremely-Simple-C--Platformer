@@ -132,6 +132,11 @@ namespace Platformer
 					new Size (Player.WIDTH, 1));
 				rectBot = new Rectangle (new Point ((int)(player.x + xSpeed), (int)(player.y + Player.HEIGHT + 
 					ySpeed + 1)), new Size (Player.WIDTH, 1));
+				if (player.gun.left) {
+					rectLeft.X -= player.gun.width;
+				} else {
+					rectRight.X += player.gun.width;
+				}
 			}
 			
 			List<TileDirectionRelPlayer > lst = new List<TileDirectionRelPlayer> ();			
@@ -184,12 +189,16 @@ namespace Platformer
 				player.y = tile.tile.y - Player.HEIGHT - 1;
 				player.falling = false;
 				player.yDir = 0;
-			}			
-			else if (tile.left) {
+			} else if (tile.left) {
 				player.x = tile.tile.x + Tile.WIDTH;
-			}
-			else if (tile.right) {
+				if (player.gun.left) {
+					player.x += player.gun.width + 1;
+				}
+			} else if (tile.right) {
 				player.x = tile.tile.x - Player.WIDTH - 1;
+				if (!player.gun.left) {
+					player.x -= player.gun.width;
+				}				
 			}
 		}
 	}
