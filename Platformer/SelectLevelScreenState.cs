@@ -17,6 +17,7 @@ namespace Platformer
 		private Menu menu;
 		private List<MenuObject> objs;
 		public event MenuSelectedHandler fileSelectedHandler;
+		public event MenuSelectedHandler menuExitHandler;
 		
 		public SelectLevelScreenState (Surface _sfcGameWindow, List<MenuObject> extraObjs) : base (_sfcGameWindow)
 		{
@@ -33,7 +34,11 @@ namespace Platformer
 				obj.selectedHandler += EventSelected;
 				objs.Add (obj);
 			}
-			
+			MenuText t = new MenuText ("Exit", Color.Gold, Color.Red, 30);
+			t.selectedHandler += delegate(MenuObject obj) {
+				menuExitHandler (obj);
+			};
+			objs.Add (t);
 			menu = new Menu (objs, MenuLayout.Vertical);
 		}
 

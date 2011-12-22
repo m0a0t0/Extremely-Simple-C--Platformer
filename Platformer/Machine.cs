@@ -33,6 +33,7 @@ namespace Platformer
 			objs.Add (new MenuText ("New", Color.Gold, Color.Black, 30));
 			state = new SelectLevelScreenState (sfcGameWindow, objs);
 			((SelectLevelScreenState)state).fileSelectedHandler += EventEditorFileSelected;
+			((SelectLevelScreenState)state).menuExitHandler += EventToMenu;			
 		}
 
 		void EventEditorFileSelected (GameMenu.MenuObject obj)
@@ -47,14 +48,15 @@ namespace Platformer
 				t = "untitled";
 			}
 			state = new LevelEditorState (sfcGameWindow, t);
-			((LevelEditorState)state).menuQuit.selectedHandler += EventEditorExit;
+			((LevelEditorState)state).menuQuit.selectedHandler += EventToMenu;
 			((LevelEditorState)state).Run ();			
 		}
 		
 		void MakeRunGameState ()
 		{
 			state = new SelectLevelScreenState (sfcGameWindow, new List<MenuObject> ());
-			((SelectLevelScreenState)state).fileSelectedHandler += EventRunFileSelected;			
+			((SelectLevelScreenState)state).fileSelectedHandler += EventRunFileSelected;
+			((SelectLevelScreenState)state).menuExitHandler += EventToMenu;			
 		
 		}
 		
@@ -80,7 +82,7 @@ namespace Platformer
 			MakeEditorState ();
 		}
 		
-		void EventEditorExit (GameMenu.MenuObject obj)
+		void EventToMenu (GameMenu.MenuObject obj)
 		{
 			MakeMenuState ();
 		}		

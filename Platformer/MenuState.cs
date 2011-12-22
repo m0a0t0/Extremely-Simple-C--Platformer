@@ -24,7 +24,7 @@ namespace Platformer
 			objs = new List<MenuObject> ();
 			menuStart = new MenuText ("Start", Color.Gold, Color.Black, 42);
 			menuEditor = new MenuText ("Level editor", Color.Gold, Color.Black, 42);
-			menuQuit = new MenuText ("Exit", Color.Gold, Color.Black, 42);
+			menuQuit = new MenuText ("Exit", Color.Gold, Color.Red, 42);
 			menuQuit.selectedHandler += EventMenuQuit;
 		}
 
