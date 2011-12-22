@@ -2,6 +2,7 @@ using SdlDotNet.Core;
 using SdlDotNet.Graphics;
 using SdlDotNet.Input;
 using System;
+using System.Xml;
 using System.Collections.Generic;
 using System.Drawing;
 using GameState;
@@ -30,11 +31,21 @@ namespace Platformer
 		{
 			name = _name;
 			map = new Map ();
-			map.EmptyMap ();
-			map.editor = true;
-			
-			vecPlayer = new Vector (new Point(2, 3));
+			map.editor = true;	
+			vecPlayer = new Vector (new Point (2, 3));
 			player = new Graphic (Color.Blue, Tile.WIDTH, Tile.HEIGHT);
+			
+			if (name.EndsWith (".xml")) {
+				XmlDocument doc = new XmlDocument ();
+				doc.Load (Constants.Constants.GetResourcePath (name));
+				map.FromXML (doc);
+				XmlNode p = doc.SelectSingleNode ("//player");
+				vecPlayer.X = Convert.ToInt16 (p.Attributes ["x"].InnerText);
+				vecPlayer.Y = Convert.ToInt16 (p.Attributes ["y"].InnerText);
+				name = name.Replace (".xml", "");				
+			} else {			
+				map.EmptyMap ();
+			}
 			
 			sfcGrid = new Surface (new Size (Constants.Constants.MAP_WIDTH + Constants.Constants.MAP_WIDTH * 
 				Tile.WIDTH, Constants.Constants.MAP_HEIGHT + Constants.Constants.MAP_HEIGHT * Tile.HEIGHT));
@@ -84,7 +95,6 @@ namespace Platformer
 			objs.Add (nameMenuTextEntry);
 			nameMenu = new Menu (objs, MenuLayout.Vertical, 10, 
 				Constants.Constants.HEIGHT / 2);
-			map.ToXML (name, vecPlayer);
 			//nameMenu.selectChangeTime = 0.5f;
 		}
 		
@@ -99,6 +109,7 @@ namespace Platformer
 			t.RenderText ();			
 			menu.lastSelectChange = -0.2f;
 			nameMenu = null;
+			map.ToXML (name, vecPlayer);			
 		}
 		
 		

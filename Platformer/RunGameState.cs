@@ -2,6 +2,7 @@ using SdlDotNet.Core;
 using SdlDotNet.Graphics;
 using SdlDotNet.Input;
 using System;
+using System.Xml;
 using System.Collections.Generic;
 using System.Drawing;
 using GameState;
@@ -18,18 +19,15 @@ namespace Platformer
 		Camera camera;
 		public event DeadHandler eventDead;
 		
-		public RunGameState (Surface _sfcGameWindow) : base(_sfcGameWindow)
+		public RunGameState (Surface _sfcGameWindow, string name) : base(_sfcGameWindow)
 		{
-			string str = "0000000000000000000000\n" +
-						 "0010000000000000000000\n" +
-						 "0110000000000000000000\n" +
-						 "1111111111000111111111\n" +
-						 "0000000000000000000000\n" +
-						 "0000000000000000000000\n" +
-						 "3333333333333333333333\n";
 			map = new Map ();
-			map.LoadFromString (str);
-			player = new Player (0 * Tile.WIDTH + 10, 0 * Tile.WIDTH);
+			XmlDocument doc = new XmlDocument ();
+			doc.Load (Constants.Constants.GetResourcePath (name));
+			map.FromXML (doc);
+			XmlNode p = doc.SelectSingleNode ("//player");
+			player = new Player (Convert.ToInt32 (p.Attributes ["x"].InnerText) * Tile.WIDTH + 10, 
+				Convert.ToInt32 (p.Attributes ["y"].InnerText) * Tile.WIDTH);
 			camera = new Camera ();
 		}
 		

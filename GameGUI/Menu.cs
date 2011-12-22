@@ -21,7 +21,7 @@ namespace GameMenu
 	{	
 		public List<MenuObject> objects;
 		public int selected;
-		private MenuLayout layout;
+		private MenuLayout layout; 	
 		public float lastSelectChange = -0.2f;
 		public float selectChangeTime = 0.1f;
 		private int startX, startY;
