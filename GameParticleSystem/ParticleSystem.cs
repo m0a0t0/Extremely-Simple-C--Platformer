@@ -35,9 +35,9 @@ namespace Platformer
 			float xStep = rand.Next ((int)ops.xSpeedRange.X, (int)ops.xSpeedRange.Y) * rand.Next ((int)ops.xDirRange.X, (int)ops.xDirRange.Y);
 			float yStep = rand.Next ((int)ops.ySpeedRange.X, (int)ops.ySpeedRange.Y) * rand.Next ((int)ops.yDirRange.X, (int)ops.yDirRange.Y);
 			int xStop = rand.Next ((int)ops.xStopRange.X, (int)ops.xStopRange.Y);
-			int yStop = rand.Next ((int)ops.yStopRange.X, (int)ops.yStopRange.Y);
+			int yStop = rand.Next ((int)ops.yStopRange.X, (int)ops.yStopRange.Y);		
 			Particle p = new Particle (_graphic, ops.alpha, ops.alphaStep, x, xStep, y, yStep, xStop, yStop);
-			particles.Add (p);		
+			particles.Add (p);	
 		}
 		
 		private double RandomDouble (double min, double max)
@@ -142,6 +142,7 @@ namespace Platformer
 		public Particle (Graphic _graphic, int _alpha, int _alphaStep, float _x, float _xStep, float _y, float _yStep, 
 			int _xStop, int _yStop)
 		{
+			xTravelled = yTravelled = 0;			
 			graphic = _graphic;
 			width = graphic.width;
 			height = graphic.height;

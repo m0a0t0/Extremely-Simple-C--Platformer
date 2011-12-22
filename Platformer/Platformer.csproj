@@ -47,15 +47,15 @@
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Map.cs" />
     <Compile Include="Player.cs" />
-    <Compile Include="Tile.cs" />
     <Compile Include="Effects.cs" />
     <Compile Include="Machine.cs" />
-    <Compile Include="MenuState.cs" />
-    <Compile Include="RunGameState.cs" />
-    <Compile Include="LevelEditorState.cs" />
-    <Compile Include="SelectLevelScreenState.cs" />
+    <Compile Include="State\LevelEditorState.cs" />
+    <Compile Include="State\MenuState.cs" />
+    <Compile Include="State\RunGameState.cs" />
+    <Compile Include="State\SelectLevelScreenState.cs" />
+    <Compile Include="Map\Map.cs" />
+    <Compile Include="Map\Tile.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -82,5 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="..\" />
+    <Folder Include="State\" />
+    <Folder Include="Map\" />
   </ItemGroup>
 </Project>
