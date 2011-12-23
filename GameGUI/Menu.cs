@@ -177,7 +177,7 @@ namespace GameMenu
 			ApplyCamera (c);
 		}
 		
-		public abstract void Draw (Surface sfcGameWindow);
+		//public override void Draw (Surface sfcGameWindow);
 		
 		public virtual void Fire ()
 		{

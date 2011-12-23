@@ -132,7 +132,6 @@ namespace Platformer
 	
 	public class Particle : Sprite 
 	{
-		private Graphic graphic;
 		private float alpha, alphaStep;
 		private float xStep, yStep;
 		private int xStop, yStop;
@@ -169,7 +168,7 @@ namespace Platformer
 			ApplyCamera (camera);
 		}
 		
-		public void Draw (Surface sfcGameWindow)
+		public override void Draw (Surface sfcGameWindow)
 		{
 			graphic.Draw (sfcGameWindow, x, y, (int)alpha);
 		}

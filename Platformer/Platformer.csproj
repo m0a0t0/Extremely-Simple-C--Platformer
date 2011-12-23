@@ -58,6 +58,8 @@
     <Compile Include="Map\Tile.cs" />
     <Compile Include="Guns\Guns.cs" />
     <Compile Include="Sprites.cs" />
+    <Compile Include="Enemies\Enemy.cs" />
+    <Compile Include="Enemies\SimpleEnemy.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -87,5 +89,6 @@
     <Folder Include="State\" />
     <Folder Include="Map\" />
     <Folder Include="Guns\" />
+    <Folder Include="Enemies\" />
   </ItemGroup>
 </Project>

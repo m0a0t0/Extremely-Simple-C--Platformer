@@ -11,14 +11,15 @@ namespace Platformer
 	public abstract class KillableSprite : Sprite {
 		public float health = 100.0f;
 	}
+	
 	public abstract class GunSprite : KillableSprite
 	{
 		public Gun gun;
 		
-		public virtual void Update (float elapsed, Camera c)
+		public virtual void Update (float elapsed, Camera camera, Player player)
 		{
-			ApplyCamera (c);
-			gun.Update (elapsed, c);
+			ApplyCamera (camera);
+			gun.Update (elapsed, camera);
 			if (xDir != 0) {
 				gun.left = xDir < 0;
 
@@ -31,7 +32,7 @@ namespace Platformer
 			gun.y = y + height / 3;
 		}
 		
-		public virtual void Draw (Surface sfcGameWindow)
+		public override void Draw (Surface sfcGameWindow)
 		{
 			gun.Draw (sfcGameWindow);
 		}

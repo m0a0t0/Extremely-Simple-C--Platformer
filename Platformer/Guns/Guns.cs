@@ -12,13 +12,13 @@ namespace Platformer
 {
 	public enum GunType {
 		HandGun,
+		NullGun,
 	}
 	
 	public class Gun : Sprite
 	{
 		GunType gunType;
 		public bool left = false;
-		Graphic graphic;
 		GunSprite parent;
 		public List<Bullet> bullets;
 		private float lastFireTime = 0.0f;
@@ -30,7 +30,12 @@ namespace Platformer
 			parent = _parent;
 			gunType = _gunType;
 			width = Tile.WIDTH;
-			height = Tile.HEIGHT;		
+			height = Tile.HEIGHT;
+			ChangeGun ();
+		}
+		
+		public void ChangeGun ()
+		{
 			Surface sfc = new Surface (100, 100);
 			if (gunType == GunType.HandGun) {
 				width = (int)(width / 4);
@@ -39,10 +44,13 @@ namespace Platformer
 				sfc.Fill (Color.White);	
 				sfc.Draw (new Box (new Point (0, 0), new Size (width, height)), 
 					Color.Black, true, true);
-				fireInterval = 0.5f;
+				fireInterval = 0.25f;
+			} else if (gunType == GunType.NullGun) {
+				width = height = 0;
+				fireInterval = float.MaxValue;
 			}
 			sfc.Update ();
-			graphic = new Graphic (sfc);	
+			graphic = new Graphic (sfc);				
 		}
 		
 		public void Update (float elapsed, Camera camera)
@@ -61,7 +69,7 @@ namespace Platformer
 			}
 		}
 		
-		public void Draw (Surface sfcGameWindow)
+		public override void Draw (Surface sfcGameWindow)
 		{
 			graphic.Draw (sfcGameWindow, x, y);
 			foreach (Bullet b in bullets) {
@@ -88,7 +96,6 @@ namespace Platformer
 		private int speed;
 		private int alphaSpeed = -50;
 		private float alpha = 255;
-		private Graphic graphic;
 		private float hitPoints;
 		private float hitPointSpeed;
 		public bool dead = false;
@@ -103,7 +110,7 @@ namespace Platformer
 				speed = 300;
 				hitPoints = 10;
 				hitPointSpeed = -0.7f;
-				width = 10;
+				width = 5;
 				height = 2;
 				graphic = new Graphic (Color.Black, width, height);
 			}
@@ -123,9 +130,9 @@ namespace Platformer
 			rect = new Rectangle (new Point ((int)x, (int)y), new Size (width, height));
 		}
 		
-		public void Draw (Surface sfcGameWindow)
+		public override void Draw (Surface sfcGameWindow)
 		{
-			graphic.Draw (sfcGameWindow, (int)x, (int)y, (int)alpha, true);
+			graphic.Draw (sfcGameWindow, (int)x, (int)y, (int)alpha);
 		}
 	}
 }

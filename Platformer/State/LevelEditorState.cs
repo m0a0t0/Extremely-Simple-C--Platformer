@@ -12,13 +12,14 @@ using GameGraphic;
 
 namespace Platformer
 {	
-	public class EditorPlayer : Sprite {
+	public class EditorSprite : Sprite {
 		public Vector gridPos;
-		Graphic graphic;
-		public EditorPlayer (Vector _gridPos) : base()
+		public object data;
+		
+		public EditorSprite (Vector _gridPos, Sprite sprite) : base()
 		{
 			gridPos = _gridPos;
-			graphic = new Graphic (Color.Blue, Player.WIDTH, Player.HEIGHT);
+			graphic = sprite.graphic;
 		}
 		
 		public void Update (Camera c)
@@ -26,7 +27,7 @@ namespace Platformer
 			ApplyCamera (c);
 		}
 		
-		public void Draw (Surface sfcGameWindow)
+		public override void Draw (Surface sfcGameWindow)
 		{
 			graphic.Draw (sfcGameWindow, (int)x, (int)y, 255, true);
 		}
@@ -56,7 +57,7 @@ namespace Platformer
 			ApplyCamera (c);
 		}
 		
-		public void Draw (Surface sfcGameWindow)
+		public override void Draw (Surface sfcGameWindow)
 		{
 			sfcGameWindow.Blit (sfcGrid, new Rectangle (new Point ((int)x, (int)y), 
 				new Size (Constants.Constants.WIDTH, Constants.Constants.HEIGHT)));
@@ -68,18 +69,18 @@ namespace Platformer
 		private Menu menu;
 		private Graphic menuBackground;
 		private Graphic menuBackgroundBorder;		
-		List<MenuObject > menuObjs;
 		public EditorGrid grid;
 		private Map map;
 		private Menu nameMenu;
 		private string name;
 		private Vector vecPlayer;
-		private EditorPlayer player;
+		private EditorSprite player;
 		private Camera camera;
 		public static float CAMERA_SPEED = 5f;
 		public static int TEXT_SIZE = 25;
 		private float overallCameraX, overallCameraY;
 		public event MenuSelectedHandler backToMenuHandler;
+		private List<EditorSprite> enemies;
 		
 		public LevelEditorState (Surface _sfcGameWindow, string _name="untitled") : base(_sfcGameWindow)
 		{
@@ -88,7 +89,8 @@ namespace Platformer
 			map = new Map ();
 			map.editor = true;	
 			vecPlayer = new Vector (new Point (2, 3));
-			player = new EditorPlayer (vecPlayer);
+			player = new EditorSprite (vecPlayer, new Player (0, 0));
+			enemies = new List<EditorSprite> ();
 			if (name.EndsWith (".xml")) {
 				XmlDocument doc = new XmlDocument ();
 				doc.Load (Constants.Constants.GetResourcePath (name));
@@ -96,7 +98,19 @@ namespace Platformer
 				XmlNode p = doc.SelectSingleNode ("//player");
 				player.gridPos.X = Convert.ToInt16 (p.Attributes ["x"].InnerText);
 				player.gridPos.Y = Convert.ToInt16 (p.Attributes ["y"].InnerText);
-				name = name.Replace (".xml", "");				
+				name = name.Replace (".xml", "");		
+				foreach (XmlNode node in doc.SelectNodes("//enemy")) {
+					EnemyType typ = (EnemyType)Enum.Parse (typeof(EnemyType), node.Attributes ["type"].InnerText);
+					int x = Convert.ToInt16 (node.Attributes ["x"].InnerText);
+					int y = Convert.ToInt16 (node.Attributes ["y"].InnerText);
+					Enemy enemy = Enemy.GetEnemy (typ, x, y);
+					EditorSprite s = new EditorSprite (new Vector (new Point (x, y)), enemy);
+					Vector vec = map.GetTilePos (x, y);
+					s.x = vec.X;
+					s.y = vec.Y;					
+					s.data = (object)typ;
+					enemies.Add (s);
+				}
 			} else {			
 				map.EmptyMap ();
 			}
@@ -107,12 +121,18 @@ namespace Platformer
 			
 			grid = new EditorGrid ();
 			
-			menuObjs = new List<MenuObject> ();
+			List<MenuObject > menuObjs = new List<MenuObject> ();
 			foreach (TileType typ in Enum.GetValues(typeof(TileType))) {
 				MenuText t = new MenuText (typ.ToString (), Color.Gold, Color.Black, TEXT_SIZE);
 				menuObjs.Add (t);
 			}
-			MenuText menuPlayer = new MenuText ("Player", Color.Gold, Color.Black, TEXT_SIZE);
+			foreach (EnemyType typ in Enum.GetValues(typeof(EnemyType))) {
+				MenuText t = new MenuText (typ.ToString (), Color.Gold, Color.Gray, TEXT_SIZE);
+				menuObjs.Add (t);
+			}			
+			MenuText menuNoEnemy = new MenuText ("NoEnemy", Color.Gold, Color.Gray, TEXT_SIZE);
+			menuObjs.Add (menuNoEnemy);
+			MenuText menuPlayer = new MenuText ("Player", Color.Gold, Color.Blue, TEXT_SIZE);
 			menuObjs.Add (menuPlayer);
 			MenuText menuSave = new MenuText ("Save", Color.Gold, Color.Red, TEXT_SIZE);	
 			menuSave.selectedHandler += EventSave;
@@ -139,10 +159,6 @@ namespace Platformer
 				Console.WriteLine (ex.ToString ());
 			}
 			backToMenuHandler (obj);
-		}
-		
-		public void Run ()
-		{
 		}
 		
 		public void GenerateMenuBackground () {
@@ -175,7 +191,7 @@ namespace Platformer
 			GenerateMenuBackground ();						
 			menu.lastSelectChange = -0.2f;
 			nameMenu = null;
-			map.ToXML (name, vecPlayer);
+			map.ToXML (name, vecPlayer, enemies);
 		}
 		
 		
@@ -199,6 +215,9 @@ namespace Platformer
 			map.Update (elapsed, ref p, camera, ref b);
 			grid.Update (camera);
 			player.Update (camera);	
+			foreach (EditorSprite s in enemies) {
+				s.Update (camera);
+			}
 		}
 		
 		void HandleMouse ()
@@ -215,14 +234,14 @@ namespace Platformer
 				bool tileXA = false;
 				bool tileYA = false;
 				for (int x=0; x < Constants.Constants.MAP_WIDTH; x++) {
-					if (Mouse.MousePosition.X+overallCameraX < x * Tile.WIDTH + x * 2 + 1) {
+					if (Mouse.MousePosition.X + overallCameraX < x * Tile.WIDTH + x * 2 + 1) {
 						tileX = x - 1;
 						tileXA = true;
 						break;
 					}
 				}
 				for (int y=0; y < Constants.Constants.MAP_HEIGHT; y++) {
-					if (Mouse.MousePosition.Y+overallCameraY < y * Tile.WIDTH + y * 2 + 1) {
+					if (Mouse.MousePosition.Y + overallCameraY < y * Tile.WIDTH + y * 2 + 1) {
 						tileY = y - 1;
 						tileYA = true;
 						break;
@@ -234,7 +253,33 @@ namespace Platformer
 						player.gridPos = new Vector (new Point (tileX, tileY));
 						Vector v = map.GetTilePos ((int)player.gridPos.X, (int)player.gridPos.Y);
 						player.x = v.X;
-						player.y = v.Y;								
+						player.y = v.Y;		
+					} else if (menuText.text == "NoEnemy") {
+						EditorSprite removeSprite = null;
+						foreach (EditorSprite s in enemies) {
+							if (s.gridPos.X == tileX && s.gridPos.Y == tileY) {
+								removeSprite = s;
+							}
+						}
+						if (removeSprite != null) {
+							enemies.Remove (removeSprite);
+						}
+					} else if (menuText.text.EndsWith ("Enemy")) {
+						EnemyType typ = (EnemyType)Enum.Parse (typeof(EnemyType), menuText.text);
+						Enemy e = Enemy.GetEnemy (typ, 0, 0);
+						EditorSprite s = new EditorSprite (new Vector (new Point (tileX, tileY)), e);	
+						s.data = (object)typ;						
+						for (int i=0; i < enemies.Count; i++) {
+							EditorSprite sprite = enemies [i];
+							if (sprite.gridPos == s.gridPos) {
+								enemies.Remove (sprite);
+								i--;
+							}
+						}
+						Vector v = map.GetTilePos (tileX, tileY);
+						s.x = v.X;
+						s.y = v.Y;
+						enemies.Add (s);
 					} else if (menuText.text != "Exit" && menuText.text != "Save" && menuText.text != name) {
 						TileType typ = (TileType)Enum.Parse (typeof(TileType), menuText.text, true);
 						Graphic t = map.lookup [typ].Clone ();
@@ -282,6 +327,9 @@ namespace Platformer
 			menuBackgroundBorder.Draw (sfcGameWindow, 5, 700, 255, true);			
 			menuBackground.Draw (sfcGameWindow, 6, 700, 255, true);
 			player.Draw (sfcGameWindow);
+			foreach (EditorSprite s in enemies) {
+				s.Draw (sfcGameWindow);
+			}
 			menu.Draw (sfcGameWindow);	
 			sfcGameWindow.Update ();
 		}

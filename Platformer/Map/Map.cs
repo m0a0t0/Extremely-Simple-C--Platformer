@@ -62,7 +62,7 @@ namespace Platformer
 			}
 		}
 			
-		public void ToXML (String name, Vector playerPos)
+		public void ToXML (String name, Vector playerPos, List<EditorSprite> enemies)
 		{
 			XmlWriter writer = new XmlTextWriter (Constants.Constants.GetResourcePath (name + ".xml"), null);
 			writer.WriteStartDocument ();
@@ -81,7 +81,16 @@ namespace Platformer
 			writer.WriteStartElement ("player");
 			writer.WriteAttributeString ("x", playerPos.X.ToString ());
 			writer.WriteAttributeString ("y", playerPos.Y.ToString ());
-			writer.WriteEndElement ();									
+			writer.WriteEndElement ();	
+			writer.WriteStartElement ("enemies");
+			foreach (EditorSprite sprite in enemies) {
+				writer.WriteStartElement ("enemy");
+				EnemyType typ = (EnemyType)sprite.data;
+				writer.WriteAttributeString ("x", sprite.gridPos.X.ToString ());
+				writer.WriteAttributeString ("y", sprite.gridPos.Y.ToString ());				
+				writer.WriteAttributeString ("type", typ.ToString ());
+				writer.WriteEndElement ();
+			}
 			writer.WriteEndElement ();	
 			writer.Close ();
 		}
@@ -113,7 +122,7 @@ namespace Platformer
 			foreach (List<Tile> r in map) {
 				foreach (Tile c in r) {
 					if (!c.outOfSight)
-						c.Draw (sfcGameWindow, editor);
+						c.Draw2 (sfcGameWindow, editor);
 				}
 			}
 		}

@@ -38,11 +38,12 @@ namespace Platformer
 			gun = new Gun (GunType.HandGun, this);
 			width = WIDTH;
 			height = HEIGHT;
+			graphic = new Graphic (COLOUR, WIDTH, HEIGHT);
 //			gun.x = x + width;
 //			gun.y = y;
 		}
 		
-		public override void Update (float elapsed, Camera camera)
+		public override void Update (float elapsed, Camera camera, Player player)
 		{
 			if (health <= 0) {
 				dead = true;
@@ -59,7 +60,7 @@ namespace Platformer
 			}
 			y += yDir * elapsed * FALL_SPEED;			
 			x += xDir * elapsed * MOVE_SPEED;			
-			base.Update (elapsed, camera);
+			base.Update (elapsed, camera, player);
 			if (jumping) {
 				if (yDir >= 0) {
 					jumping = false;
@@ -81,6 +82,7 @@ namespace Platformer
 				return;
 			}
 			base.Draw (sfcGameWindow);
+			graphic.Draw (sfcGameWindow, (int)x, (int)y);
 			sfcGameWindow.Draw (new Box (new Point ((int)x, (int)y), new Size (WIDTH, HEIGHT)), COLOUR);
 		}
 		
