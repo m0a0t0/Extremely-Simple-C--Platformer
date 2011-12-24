@@ -12,9 +12,11 @@ namespace Platformer
 	{
 		public SimpleEnemy (float _x, float _y) : base (_x, _y)
 		{
+			health = 25;
 			width = height = 27;
 			y = y + (Tile.HEIGHT - height);
-			graphic = new Graphic (Color.Red, width, height);
+			colour = Color.Red;
+			graphic = new Graphic (colour, width, height);
 		}
 		
 		public override void DoAI (Player player)
