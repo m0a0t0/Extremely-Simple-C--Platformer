@@ -78,7 +78,6 @@ namespace Platformer
 		private Camera camera;
 		public static float CAMERA_SPEED = 5f;
 		public static int TEXT_SIZE = 25;
-		private float overallCameraX, overallCameraY;
 		public event MenuSelectedHandler backToMenuHandler;
 		private List<EditorSprite> enemies;
 		
@@ -211,8 +210,8 @@ namespace Platformer
 			
 			menu.Update (elapsed);
 			Player p = null;
-			List<Bullet > b = null;
-			map.Update (elapsed, ref p, camera, ref b);
+			List<Enemy > _enemies = null;
+			map.Update (elapsed, ref p, camera, ref _enemies);
 			grid.Update (camera);
 			player.Update (camera);	
 			foreach (EditorSprite s in enemies) {
@@ -234,14 +233,14 @@ namespace Platformer
 				bool tileXA = false;
 				bool tileYA = false;
 				for (int x=0; x < Constants.Constants.MAP_WIDTH; x++) {
-					if (Mouse.MousePosition.X + overallCameraX < x * Tile.WIDTH + x * 2 + 1) {
+					if (Mouse.MousePosition.X + map.overallCamera.x < x * Tile.WIDTH + x * 2 + 1) {
 						tileX = x - 1;
 						tileXA = true;
 						break;
 					}
 				}
 				for (int y=0; y < Constants.Constants.MAP_HEIGHT; y++) {
-					if (Mouse.MousePosition.Y + overallCameraY < y * Tile.WIDTH + y * 2 + 1) {
+					if (Mouse.MousePosition.Y + map.overallCamera.y < y * Tile.WIDTH + y * 2 + 1) {
 						tileY = y - 1;
 						tileYA = true;
 						break;
@@ -249,9 +248,9 @@ namespace Platformer
 				}	
 				if (tileXA && tileYA) {
 					MenuText menuText = (MenuText)menu.objects [menu.selected];
+					Vector v = map.GetTilePos (tileX, tileY);					
 					if (menuText.text == "Player") {
 						player.gridPos = new Vector (new Point (tileX, tileY));
-						Vector v = map.GetTilePos ((int)player.gridPos.X, (int)player.gridPos.Y);
 						player.x = v.X;
 						player.y = v.Y;		
 					} else if (menuText.text == "NoEnemy") {
@@ -268,15 +267,14 @@ namespace Platformer
 						EnemyType typ = (EnemyType)Enum.Parse (typeof(EnemyType), menuText.text);
 						Enemy e = Enemy.GetEnemy (typ, 0, 0);
 						EditorSprite s = new EditorSprite (new Vector (new Point (tileX, tileY)), e);	
-						s.data = (object)typ;						
+						s.data = (object)typ;	
 						for (int i=0; i < enemies.Count; i++) {
 							EditorSprite sprite = enemies [i];
-							if (sprite.gridPos == s.gridPos) {
+							if (sprite.gridPos.X == s.gridPos.X && sprite.gridPos.Y == s.gridPos.Y) {
 								enemies.Remove (sprite);
 								i--;
 							}
 						}
-						Vector v = map.GetTilePos (tileX, tileY);
 						s.x = v.X;
 						s.y = v.Y;
 						enemies.Add (s);
@@ -309,8 +307,6 @@ namespace Platformer
 			} else {
 				camera.y = 0;
 			}
-			overallCameraX += -1 * camera.x;
-			overallCameraY += -1 * camera.y;
 		}
 		public override void Draw ()
 		{

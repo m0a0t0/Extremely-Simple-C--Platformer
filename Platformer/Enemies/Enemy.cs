@@ -20,6 +20,9 @@ namespace Platformer
 			x = _x;
 			y = _y;
 			gun = new Gun (GunType.NullGun, this);
+			MOVE_SPEED = 200;
+			FALL_SPEED = 4;
+			FALL_CAP = (MOVE_SPEED + MOVE_SPEED / 100 * 50) / FALL_SPEED;
 		}
 		
 		public override void Update (float elapsed, Camera camera, Player player)

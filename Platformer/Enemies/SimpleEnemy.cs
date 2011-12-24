@@ -13,6 +13,7 @@ namespace Platformer
 		public SimpleEnemy (float _x, float _y) : base (_x, _y)
 		{
 			width = height = 27;
+			y = y + (Tile.HEIGHT - height);
 			graphic = new Graphic (Color.Red, width, height);
 		}
 		

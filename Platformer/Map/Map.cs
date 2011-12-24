@@ -22,9 +22,11 @@ namespace Platformer
 		public List<List<Tile>> map;
 		public Dictionary<TileType,Graphic> lookup;
 		public bool editor = false;
+		public Camera overallCamera;
 		
 		public Map ()
 		{
+			overallCamera = new Camera ();
 			map = new List<List<Tile>> ();
 			lookup = new Dictionary<TileType, Graphic> ();
 			lookup.Add (TileType.Air, new Graphic (Color.Transparent, Tile.WIDTH, Tile.HEIGHT));
@@ -99,8 +101,8 @@ namespace Platformer
 		{
 			Vector v = new Vector (new Point (x * Tile.WIDTH, y * Tile.HEIGHT));
 			if (editor) {
-				v.X = x * Tile.WIDTH + x * 2 + 1;
-				v.Y = y * Tile.HEIGHT + y * 2 + 1;
+				v.X = x * Tile.WIDTH + x * 2 + 1 + -1*overallCamera.x;
+				v.Y = y * Tile.HEIGHT + y * 2 + 1 + -1*overallCamera.y;
 			}
 			return v;
 		}
@@ -127,87 +129,125 @@ namespace Platformer
 			}
 		}
 
-		public void Update (float elapsed, ref Player player, Camera _camera, ref List<Bullet> playerBullets)
-		{
-			Rectangle rectLeft, rectRight, rectTop, rectBot;
-			if (player != null) {
-				float xSpeed = player.xDir * elapsed * Player.MOVE_SPEED;
-				float ySpeed = player.yDir * elapsed * Player.FALL_SPEED;				
-				rectLeft = new Rectangle (new Point ((int)(player.x + xSpeed), (int)(player.y + ySpeed)), 
-					new Size (1, Player.HEIGHT));
-				rectRight = new Rectangle (new Point ((int)(player.x + xSpeed + Player.WIDTH), (int)(player.y + 
-					ySpeed)), new Size (1, Player.HEIGHT));
-				rectTop = new Rectangle (new Point ((int)(player.x + xSpeed), ((int)(player.y + ySpeed))), 
-					new Size (Player.WIDTH, 1));
-				rectBot = new Rectangle (new Point ((int)(player.x + xSpeed), (int)(player.y + Player.HEIGHT + 
-					ySpeed + 1)), new Size (Player.WIDTH, 1));
-				if (player.gun.left) {
-					rectLeft.X -= player.gun.width;
-				} else {
-					rectRight.X += player.gun.width;
-				}
-			}
+		public void Update (float elapsed, ref Player player, Camera _camera, ref List<Enemy> enemies)
+		{	
+			overallCamera.x += -1 * _camera.x;
+			overallCamera.y += -1 * _camera.y;
 			
-			List<TileDirectionRelPlayer > lst = new List<TileDirectionRelPlayer> ();			
 			foreach (List<Tile> r in map) {
 				foreach (Tile c in r) {
 					c.Update (elapsed, _camera);
-					if (c.tileType == TileType.Air) {
+					if (c.tileType == TileType.Air || player == null) {
 						continue;
 					}
-					if (playerBullets != null) {
-						foreach (Bullet b in playerBullets) {
+					if (player.gun.bullets != null) {
+						foreach (Bullet b in player.gun.bullets) {
 							if (c.rect.IntersectsWith (b.rect)) {
-								playerBullets [playerBullets.IndexOf (b)].dead = true;
+								player.gun.bullets [player.gun.bullets.IndexOf (b)].dead = true;
 							}
 						}
 					}
-				
-					if (c.outOfSight || player == null) {
-						continue;				
+					GunSprite gS;					
+					for (int i=0; i < enemies.Count; i++) {
+						gS = (GunSprite)enemies [i];
+						Collision (ref gS, c, elapsed);
+						enemies [i] = (Enemy)gS;
 					}
-					TileDirectionRelPlayer t = new TileDirectionRelPlayer ();
-					t.tile = c;
-					t.below = c.rect.IntersectsWith (rectBot);
-					t.above = c.rect.IntersectsWith (rectTop);
-					t.left = c.rect.IntersectsWith (rectLeft);
-					t.right = c.rect.IntersectsWith (rectRight);
-					if (t.below || t.above || t.left || t.right) {
-						if (t.tile.tileType == TileType.Fire) {
-							player.dead = true;
-						}
-						lst.Add (t);
-					}
+					gS = (GunSprite)player;
+					Collision (ref gS, c, elapsed);
 				}
 			}
-			if (player == null) {
+			if (player == null || enemies == null) {
 				return;
-			}
-			if (lst.Count == 0 && !player.jumping) {
+			} 
+			if (player.tileDirRelSprites.Count == 0) {
 				player.falling = true;
 			} else {
-				foreach (TileDirectionRelPlayer t in lst) {
-					MovePlayer (ref player, t, new Rectangle[] {rectLeft, rectRight, rectTop, rectBot});
+				foreach (TileDirectionRelSprite t in player.tileDirRelSprites) {
+					GunSprite gS = (GunSprite)player;						
+					MoveSprite (ref gS, t, gS.rectBot);
 				}
+			}
+			
+			foreach (Enemy enemy in enemies) {
+				if (enemy.tileDirRelSprites.Count == 0) {
+					enemy.falling = true;
+				} else {
+					foreach (TileDirectionRelSprite t in enemy.tileDirRelSprites) {
+						GunSprite gS = (GunSprite)enemy;						
+						MoveSprite (ref gS, t, gS.rectBot);
+					}
+				}				
 			}
 		}
 		
-		private void MovePlayer (ref Player player, TileDirectionRelPlayer tile, Rectangle[] rectangles)
+		private void Collision (ref GunSprite gS, Tile tile, float elapsed)
+		{		
+//			Tile mBLeft, mBRight;
+//			mBLeft = map [(int)((gS.y + overallCamera.y) / Tile.HEIGHT) + 1] [(int)((gS.x + overallCamera.x) / 
+//				Tile.WIDTH)];
+//			mBRight = map [(int)((gS.y + overallCamera.y) / Tile.HEIGHT) + 1] [(int)((gS.width + gS.x + 
+//				overallCamera.x) / Tile.WIDTH)];
+//			
+//			if (mBLeft.tileType != TileType.Air || mBRight.tileType != TileType.Air) {
+//				gS.falling = false;
+//			} else if (gS.falling == false && !gS.jumping) {
+//				gS.falling = true;						
+//			}	
+			
+			Rectangle rectLeft, rectRight, rectTop, rectBot;
+			if (gS != null) {
+				float xSpeed = gS.xDir * elapsed * gS.MOVE_SPEED;
+				float ySpeed = gS.yDir * elapsed * gS.FALL_SPEED;				
+				rectLeft = new Rectangle (new Point ((int)(gS.x + xSpeed), (int)(gS.y + ySpeed)), 
+					new Size (1, gS.height));
+				rectRight = new Rectangle (new Point ((int)(gS.x + xSpeed + gS.width), (int)(gS.y + 
+					ySpeed)), new Size (1, gS.height));
+				rectTop = new Rectangle (new Point ((int)(gS.x + xSpeed), ((int)(gS.y + ySpeed))), 
+					new Size (Player.WIDTH, 1));
+				rectBot = new Rectangle (new Point ((int)(gS.x + xSpeed), (int)(gS.y + gS.height + 
+					ySpeed + 1)), new Size (gS.width, 1));
+				gS.rectBot = rectBot;
+				if (gS.gun.left) {
+					rectLeft.X -= gS.gun.width;
+				} else {
+					rectRight.X += gS.gun.width;
+				}
+			}
+			
+			if (tile.outOfSight || gS == null) {
+				return;			
+			}
+			TileDirectionRelSprite t = new TileDirectionRelSprite ();
+			t.tile = tile;
+			t.below = tile.rect.IntersectsWith (rectBot);
+			t.above = tile.rect.IntersectsWith (rectTop);
+			t.left = tile.rect.IntersectsWith (rectLeft);
+			t.right = tile.rect.IntersectsWith (rectRight);
+			if (t.below || t.above || t.left || t.right) {
+				if (t.tile.tileType == TileType.Fire) {
+					gS.dead = true;
+				}
+				gS.tileDirRelSprites.Add (t);
+			}			
+		}
+		private void MoveSprite (ref GunSprite gS, TileDirectionRelSprite tile, Rectangle rectangle)
 		{
-			if (tile.below && !player.jumping && rectangles [3].IntersectsWith (new Rectangle (new Point ((int)tile.tile.x, (int)tile.tile.y), new Size (Tile.WIDTH, 7)))) {
-				player.y = tile.tile.y - Player.HEIGHT - 1;
-				player.falling = false;
-				player.yDir = 0;
+			if (tile.below && !gS.jumping && rectangle.IntersectsWith (new Rectangle (new Point ((int)tile.tile.x, (int)tile.tile.y), new Size (Tile.WIDTH, 7)))) {
+				gS.y = tile.tile.y - gS.height - 1;
+				gS.falling = false;
+				gS.yDir = 0;
 			} else if (tile.left) {
-				player.x = tile.tile.x + Tile.WIDTH;
-				if (player.gun.left) {
-					player.x += player.gun.width + 1;
+				gS.x = tile.tile.x + Tile.WIDTH;
+				if (gS.gun.left) {
+					gS.x += gS.gun.width + 1;
 				}
 			} else if (tile.right) {
-				player.x = tile.tile.x - Player.WIDTH - 1;
-				if (!player.gun.left) {
-					player.x -= player.gun.width;
-				}				
+				gS.x = tile.tile.x - gS.width - 1;
+				if (!gS.gun.left) {
+					gS.x -= gS.gun.width;
+				}	
+				gS.Collision (tile.left);				
 			}
 		}
 	}

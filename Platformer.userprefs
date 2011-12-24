@@ -1,31 +1,30 @@
 ﻿<Properties GitUserInfo="UsingGIT">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Platformer/Guns/Guns.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Platformer/Map/Map.cs">
     <Files>
-      <File FileName="Platformer/Guns/Guns.cs" Line="35" Column="37" />
-      <File FileName="Platformer/Player.cs" Line="35" Column="4" />
-      <File FileName="Platformer/Sprites.cs" Line="23" Column="25" />
-      <File FileName="GameGraphic/Sprite.cs" Line="9" Column="2" />
-      <File FileName="Platformer/Map/Map.cs" Line="136" Column="18" />
-      <File FileName="Platformer/State/LevelEditorState.cs" Line="117" Column="13" />
-      <File FileName="Platformer/Machine.cs" Line="51" Column="47" />
-      <File FileName="Platformer/State/RunGameState.cs" Line="63" Column="19" />
+      <File FileName="Platformer/Sprites.cs" Line="28" Column="56" />
+      <File FileName="Platformer/Enemies/Enemy.cs" Line="30" Column="6" />
+      <File FileName="Platformer/Player.cs" Line="20" Column="19" />
+      <File FileName="Platformer/Guns/Guns.cs" Line="22" Column="27" />
+      <File FileName="Platformer/State/RunGameState.cs" Line="55" Column="1" />
+      <File FileName="Platformer/Map/Map.cs" Line="208" Column="5" />
+      <File FileName="Platformer/Enemies/SimpleEnemy.cs" Line="16" Column="35" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
-          <Node name="Constants" expanded="True" />
-          <Node name="GameGraphic" expanded="True" />
-          <Node name="GameMenu" expanded="True" />
-          <Node name="GameParticleSystem" expanded="True" />
           <Node name="Platformer" expanded="True">
-            <Node name="Guns" expanded="True">
-              <Node name="Guns.cs" selected="True" />
+            <Node name="Enemies" expanded="True" />
+            <Node name="Guns" expanded="True" />
+            <Node name="Map" expanded="True">
+              <Node name="Map.cs" selected="True" />
             </Node>
-            <Node name="Map" expanded="True" />
             <Node name="State" expanded="True" />
           </Node>
         </State>
+      </Pad>
+      <Pad Id="ClassPad">
+        <State expanded="True" selected="True" />
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>

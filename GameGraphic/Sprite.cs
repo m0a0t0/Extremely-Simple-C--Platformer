@@ -14,7 +14,7 @@ namespace GameGraphic
 		public bool outOfSight;
 		public int width, height;
 		public int xDir, yDir;		
-		public Graphic graphic;
+		public Graphic graphic;	
 		
 		protected virtual void ApplyCamera (Camera camera)
 		{
@@ -23,7 +23,6 @@ namespace GameGraphic
 			outOfSight = x < 0 || x > Constants.Constants.WIDTH || y < 0 || 
 				y > Constants.Constants.HEIGHT;
 		}
-		
 		public abstract void Draw (Surface sfcGameWindow);
 	}
 }

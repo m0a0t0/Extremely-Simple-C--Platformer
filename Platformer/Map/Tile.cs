@@ -55,12 +55,12 @@ namespace Platformer
 		}
 	}
 	
-	public class TileDirectionRelPlayer
+	public class TileDirectionRelSprite
 	{
 		public Tile tile;
 		public bool above, below, left, right;
 
-		public TileDirectionRelPlayer ()
+		public TileDirectionRelSprite ()
 		{
 			above = below = left = right = false;
 		}

@@ -72,7 +72,7 @@ namespace Platformer
 				enemy.Update (elapsed, camera, player);
 			}
 			HandleInput ();			
-			map.Update (elapsed, ref player, camera, ref player.gun.bullets);
+			map.Update (elapsed, ref player, camera, ref enemies);
 			camera.Update (player);						
 			
 		}
