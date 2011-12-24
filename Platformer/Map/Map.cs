@@ -140,23 +140,18 @@ namespace Platformer
 					if (c.tileType == TileType.Air || player == null) {
 						continue;
 					}
-					if (player.gun.bullets != null) {
-						foreach (Bullet b in player.gun.bullets) {
-							if (c.rect.IntersectsWith (b.rect)) {
-								player.gun.bullets [player.gun.bullets.IndexOf (b)].dead = true;
-							}
-						}
-					}
-					GunSprite gS;					
-					for (int i=0; i < enemies.Count; i++) {
-						gS = (GunSprite)enemies [i];
+					GunSprite gS = (GunSprite)player;
+					CollisionBullets (c, ref gS);
+					Collision (ref gS, c, elapsed);					
+					
+					foreach (Enemy enemy in enemies) {
+						gS = (GunSprite)enemy;
+						CollisionBullets (c, ref gS);
 						Collision (ref gS, c, elapsed);
-						enemies [i] = (Enemy)gS;
 					}
-					gS = (GunSprite)player;
-					Collision (ref gS, c, elapsed);
 				}
 			}
+			
 			if (player == null || enemies == null) {
 				return;
 			} 
@@ -179,6 +174,17 @@ namespace Platformer
 					}
 				}				
 			}
+		}
+		
+		private void CollisionBullets (Tile c, ref GunSprite gS)
+		{
+			if (gS.gun.bullets != null) {
+				foreach (Bullet b in gS.gun.bullets) {
+					if (c.rect.IntersectsWith (b.rect)) {
+						gS.gun.bullets [gS.gun.bullets.IndexOf (b)].dead = true;
+					}
+				}
+			}			
 		}
 		
 		private void Collision (ref GunSprite gS, Tile tile, float elapsed)
@@ -242,6 +248,7 @@ namespace Platformer
 				if (gS.gun.left) {
 					gS.x += gS.gun.width + 1;
 				}
+				gS.Collision (tile.left);								
 			} else if (tile.right) {
 				gS.x = tile.tile.x - gS.width - 1;
 				if (!gS.gun.left) {

@@ -68,8 +68,20 @@ namespace Platformer
 			if (player.dead) {
 				return;
 			}
-			foreach (Enemy enemy in enemies) {
-				enemy.Update (elapsed, camera, player);
+			for (int i=0; i < enemies.Count; i++) {
+				Enemy enemy = enemies [i];
+				if (enemy.system != null && enemy.system.finished) {
+					enemies.Remove (enemy);
+					i -= 1;
+				} else {
+					enemy.Update (elapsed, camera, player);
+					foreach (Bullet b in player.gun.bullets) {
+						if (b.rect.IntersectsWith (enemy.rect)) {
+							b.dead = true;
+							enemy.health -= b.hitPoints;
+						}
+					}
+				}
 			}
 			HandleInput ();			
 			map.Update (elapsed, ref player, camera, ref enemies);

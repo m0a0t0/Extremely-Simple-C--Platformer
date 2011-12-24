@@ -45,21 +45,21 @@ namespace Platformer
 	public class EffectDie : Effect {
 		public static int WIDTH = 2;
 		public static int HEIGHT = 2;
-		public EffectDie ()
+		public EffectDie (Color colour, KillableSprite kS)
 		{
 			xDirRange = new Vector (new PointF (-1.0f, 2.0f));
 			yDirRange = new Vector (new PointF (-1.0f, -1.0f));
 			xSpeedRange = new Vector (new Point (150, 200));
 			ySpeedRange = new Vector (new Point (150, 200));	
 			numberRange = new Vector (new Point (100, 200));
-			xStopRange = new Vector (new Point ((int)(Player.WIDTH*1.1), Player.WIDTH*2));
-			yStopRange = new Vector (new Point ((int)(Player.HEIGHT*1.1), Player.HEIGHT*2));//(Tile.HEIGHT - 5, Tile.HEIGHT-2));
+			xStopRange = new Vector (new Point ((int)(kS.width*1.1), kS.width*2));
+			yStopRange = new Vector (new Point ((int)(kS.height*1.1), kS.height*2));//(Tile.HEIGHT - 5, Tile.HEIGHT-2));
 			newParticlesNumberRange = new Vector (new Point (0, 0));
 			newParticlesTimeRange = new Vector (new PointF (0, 0));
 			alpha = 255;
 			alphaStep = -200;
 			repeat = false;
-			graphics = new Graphic[]{new Graphic(Player.COLOUR, WIDTH, HEIGHT), new Graphic(Color.Red, WIDTH, HEIGHT)};
+			graphics = new Graphic[]{new Graphic(colour, WIDTH, HEIGHT), new Graphic(Color.Red, WIDTH, HEIGHT)};
 			Vector blank = new Vector (0);
 			template = new ParticleOptions (blank, blank, xDirRange, yDirRange, xSpeedRange, ySpeedRange, numberRange, 
 				xStopRange,yStopRange, newParticlesTimeRange, newParticlesNumberRange, alpha, alphaStep, repeat, graphics);

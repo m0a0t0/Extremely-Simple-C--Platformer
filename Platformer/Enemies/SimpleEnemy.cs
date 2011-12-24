@@ -24,7 +24,10 @@ namespace Platformer
 		
 		public override void Draw (Surface sfcGameWindow)
 		{
-			graphic.Draw (sfcGameWindow, (int)x, (int)y);
+			base.Draw (sfcGameWindow);
+			if (!dead) {
+				graphic.Draw (sfcGameWindow, (int)x, (int)y);
+			}
 		}
 	}
 }

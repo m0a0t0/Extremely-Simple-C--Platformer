@@ -17,7 +17,7 @@ namespace Platformer
 	
 	public class Gun : Sprite
 	{
-		GunType gunType;
+		public GunType gunType;
 		public bool left = false;
 		GunSprite parent;
 		public List<Bullet> bullets;
@@ -96,7 +96,7 @@ namespace Platformer
 		private int speed;
 		private int alphaSpeed = -50;
 		private float alpha = 255;
-		private float hitPoints;
+		public float hitPoints;
 		private float hitPointSpeed;
 		public bool dead = false;
 		

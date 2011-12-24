@@ -28,7 +28,9 @@ namespace Platformer
 		public override void Update (float elapsed, Camera camera, Player player)
 		{
 			base.Update (elapsed, camera, player);
-			DoAI (player);
+			if (!dead) {
+				DoAI (player);
+			}
 		}
 		
 		public abstract void DoAI (Player player);
@@ -39,6 +41,11 @@ namespace Platformer
 				return (Enemy)new SimpleEnemy (x, y);
 			}
 			return null;
+		}
+		
+		public override void Draw (Surface sfcGameWindow)
+		{
+			base.Draw (sfcGameWindow);
 		}
 	}
 }
