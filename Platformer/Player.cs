@@ -28,11 +28,11 @@ namespace Platformer
 			graphic = new Graphic (colour, WIDTH, HEIGHT);
 		}
 		
-		public override void Update (float elapsed, Camera camera, Player player)
+		public override void Update (float elapsed, Camera camera, Player player, Map map)
 		{
 //			y += yDir * elapsed * FALL_SPEED;			
 //			x += xDir * elapsed * MOVE_SPEED;			
-			base.Update (elapsed, camera, player);
+			base.Update (elapsed, camera, player, map);
 			//rect = new Rectangle (new Point ((int)x, (int)y), new Size (WIDTH, HEIGHT + 1));			
 		}
 		

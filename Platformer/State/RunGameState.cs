@@ -64,7 +64,7 @@ namespace Platformer
 			if (player.system != null && player.system.finished) {
 				eventDead ();
 			}
-			player.Update (elapsed, camera, player);			
+			player.Update (elapsed, camera, player, map);			
 			if (player.dead) {
 				return;
 			}
@@ -74,7 +74,7 @@ namespace Platformer
 					enemies.Remove (enemy);
 					i -= 1;
 				} else {
-					enemy.Update (elapsed, camera, player);
+					enemy.Update (elapsed, camera, player, map);
 					foreach (Bullet b in player.gun.bullets) {
 						if (b.rect.IntersectsWith (enemy.rect)) {
 							b.dead = true;

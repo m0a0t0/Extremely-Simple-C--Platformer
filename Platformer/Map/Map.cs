@@ -248,13 +248,11 @@ namespace Platformer
 				if (gS.gun.left) {
 					gS.x += gS.gun.width + 1;
 				}
-				gS.Collision (tile.left);								
 			} else if (tile.right) {
 				gS.x = tile.tile.x - gS.width - 1;
 				if (!gS.gun.left) {
 					gS.x -= gS.gun.width;
 				}	
-				gS.Collision (tile.left);				
 			}
 		}
 	}

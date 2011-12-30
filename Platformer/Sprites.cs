@@ -14,7 +14,7 @@ namespace Platformer
 		public ParticleSystem system;	
 		protected Color colour;
 		
-		public virtual void Update (float elapsed, Camera camera, Player player)
+		public virtual void Update (float elapsed, Camera camera, Player player, Map map)
 		{
 			rect = new Rectangle (new Point ((int)x, (int)y), new Size (width, height));
 			if (health <= 0) {
@@ -54,9 +54,9 @@ namespace Platformer
 			}
 		}
 		
-		public override void Update (float elapsed, Camera camera, Player player)
+		public override void Update (float elapsed, Camera camera, Player player, Map map)
 		{
-			base.Update (elapsed, camera, player);
+			base.Update (elapsed, camera, player, map);
 			if (!dead) {
 				tileDirRelSprites = new List<TileDirectionRelSprite> ();
 				ApplyCamera (camera);
@@ -85,11 +85,6 @@ namespace Platformer
 				}
 				gun.y = y + height / 3;
 			}
-		}
-		
-		public virtual void Collision (bool left)
-		{
-			
 		}
 		
 		public override void Draw (Surface sfcGameWindow)

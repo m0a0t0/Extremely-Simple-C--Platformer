@@ -25,15 +25,20 @@ namespace Platformer
 			FALL_CAP = (MOVE_SPEED + MOVE_SPEED / 100 * 50) / FALL_SPEED;
 		}
 		
-		public override void Update (float elapsed, Camera camera, Player player)
+		public override void Update (float elapsed, Camera camera, Player player, Map map)
 		{
-			base.Update (elapsed, camera, player);
+			base.Update (elapsed, camera, player, map);
 			if (!dead) {
-				DoAI (player);
+				DoAI (camera, player,map);
 			}
 		}
 		
-		public abstract void DoAI (Player player);
+		public virtual void DoAI (Camera camera, Player player, Map map)
+		{
+			if (player.rect.IntersectsWith (rect)) {
+				player.dead = true;
+			}
+		}
 		
 		public static Enemy GetEnemy (EnemyType type, float x, float y)
 		{
